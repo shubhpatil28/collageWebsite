@@ -1,10 +1,7 @@
-// Smt. S. M. Agrawal Institute of Management (AIM), Chalisgaon
-// Verified Factual Institutional Data & Content Architecture
-
-export interface Program {
+export interface Course {
   id: string;
-  code: string;
   name: string;
+  code: string;
   degree: string;
   duration: string;
   affiliation: string;
@@ -13,461 +10,415 @@ export interface Program {
   overview: string;
   eligibility: string[];
   highlights: string[];
+  subjects: { semester: string; courses: string[] }[];
   careerOpportunities: string[];
-  subjects: {
-    semester: string;
-    courses: string[];
-  }[];
-  intake?: string;
 }
 
-export interface LeadershipMember {
+export interface Leadership {
   name: string;
-  title: string;
   role: string;
-  designation: string;
   message: string;
-  visionPoints?: string[];
   quote?: string;
-  image: string;
+  visionPoints?: string[];
+}
+
+export interface Notice {
+  id: string;
+  title: string;
+  date: string;
+  category: "Current Admission" | "Exam Notification" | "Academic Bulletin" | "Historical Circular";
+  description: string;
+  link?: string;
+  isImportant?: boolean;
+}
+
+export interface DownloadableDoc {
+  id: string;
+  title: string;
+  category: string;
+  fileSize?: string;
+  fileFormat: string;
+  link: string;
+  isAvailable: boolean;
 }
 
 export interface FacultyMember {
   id: string;
   name: string;
   designation: string;
-  department: string;
   qualification: string;
-  experience?: string;
-  email?: string;
+  department: string;
   specialization?: string;
+  experience?: string;
 }
 
-export interface NoticeItem {
-  id: string;
-  title: string;
-  date: string;
-  category: 'Admissions' | 'Examination' | 'Academic' | 'Events' | 'General';
-  description: string;
-  isImportant?: boolean;
-  link?: string;
-}
-
-export interface DownloadItem {
-  id: string;
-  title: string;
-  category: 'Admission' | 'Academic' | 'Examination' | 'Forms' | 'Syllabus';
-  fileFormat: 'PDF';
-  fileSize?: string;
-  uploadDate: string;
-  link: string;
-}
-
-export interface CampusFacility {
+export interface Facility {
   id: string;
   name: string;
   tagline: string;
   description: string;
-  features: string[];
+  image: string;
   icon: string;
+  features: string[];
 }
 
 export const SITE_INFO = {
   name: "Smt. S. M. Agrawal Institute of Management",
   shortName: "AIM Chalisgaon",
-  tagline: "Empowering Futures through Academic Excellence & Modern Management",
-  established: 2001,
   trust: "Smt. Sitabai Mangilal Agrawal Charitable Trust",
+  established: 2001,
+  dcode: "5162",
   affiliation: "Kavayitri Bahinabai Chaudhari North Maharashtra University (KBCNMU), Jalgaon",
-  recognition: "Recognized by Directorate of Technical Education (DTE), Govt. of Maharashtra",
-  address: "Opp. Market Yard, Ghat Road, Near Aurangabad Road, Chalisgaon - 424101, Dist. Jalgaon, Maharashtra, India",
-  phoneNumbers: ["+91 77700 81314", "+91 73500 76444", "02589-222522"],
-  emails: ["aim.director@gmail.com", "aim.office@rediffmail.com"],
+  recognition: "Directorate of Technical Education (DTE), Govt. of Maharashtra",
+  address: "Ghat Road, Opp. Market Yard, Chalisgaon - 424101, Dist. Jalgaon, Maharashtra, India",
+  phoneNumbers: [
+    "+91 9890649477", // Director In-Charge Prof. Piyush Agrawal
+    "+91 7770081314", // Registrar Mr. Devendra Joshi
+    "02589-222477"    // Office Line
+  ],
+  emails: [
+    "admissions2020.ssmaim@gmail.com",
+    "aim.office@rediffmail.com"
+  ],
   workingHours: "Monday – Saturday: 9:30 AM to 5:30 PM",
-  dcode: "AIM-6214",
-  mapUrl: "https://maps.google.com/maps?q=Chalisgaon+Market+Yard&t=&z=15&ie=UTF8&iwloc=&output=embed",
+  mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3737.893116565147!2d75.0069!3d20.4632!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjDCsDI3JzQ3LjUiTiA3NcKwMDAnMjQuOCJF!5e0!3m2!1sen!2sin!4v1620000000000!5m2!1sen!2sin"
 };
 
-export const QUICK_STATS = [
-  { label: "Established Year", value: "2001", suffix: "", icon: "Building2" },
-  { label: "Affiliated University", value: "KBCNMU", suffix: "", icon: "GraduationCap" },
-  { label: "Approved By", value: "DTE Govt. Maharashtra", suffix: "", icon: "ShieldCheck" },
-  { label: "UG & PG Programs", value: "BCA / BBA / MMS", suffix: "", icon: "BookOpen" },
-];
-
-export const LEADERSHIP: { chairman: LeadershipMember; director: LeadershipMember; viceChairman: LeadershipMember; secretary: LeadershipMember } = {
+export const LEADERSHIP: {
+  chairman: Leadership;
+  director: Leadership;
+  trustees: { name: string; role: string }[];
+} = {
   chairman: {
-    name: "Shri. Narayandas Agrawal",
-    title: "Chairman",
+    name: "Sh. Narayanbhau Agrawal",
     role: "Chairman, Smt. Sitabai Mangilal Agrawal Charitable Trust",
-    designation: "Chairman & Founder Trustee",
-    image: "/images/leadership/chairman.webp",
-    quote: "Education is not merely acquiring knowledge, but building character, competence, and vision for societal transformation.",
-    message: "Welcome to Smt. S. M. Agrawal Institute of Management (AIM), Chalisgaon. Since our establishment in 2001 under the Smt. Sitabai Mangilal Agrawal Charitable Trust, our singular vision has been to bring high-quality higher education in management and computer science to the rural and semi-urban youth of North Maharashtra. We believe that talent exists everywhere; what is needed is standard infrastructure, dedicated faculty, and an environment of disciplined learning.",
+    quote: "Higher education must serve as an empowering engine for rural & semi-urban students.",
+    message: "Welcome to AIM Chalisgaon. Since 2001, Smt. Sitabai Mangilal Agrawal Charitable Trust has remained committed to bringing benchmark higher management and computer science education to Chalisgaon. We empower our students with university-aligned academic discipline and skill enhancement.",
     visionPoints: [
-      "Fostering academic rigor combined with strong ethical values.",
-      "Providing affordable, quality higher education in computer applications and business administration.",
-      "Empowering students from all socio-economic backgrounds with professional skillsets.",
-      "Building state-of-the-art academic infrastructure in Chalisgaon."
+      "Providing accessible degree education in North Maharashtra",
+      "Building modern computer laboratories and academic infrastructure",
+      "Fostering ethical values, leadership skills, and career readiness",
+      "Encouraging continuous skill advancement and higher studies"
     ]
   },
   director: {
-    name: "Dr. Rahul Kulkarni",
-    title: "Director",
-    role: "Director, Smt. S. M. Agrawal Institute of Management",
-    designation: "Director & Academic Head",
-    image: "/images/leadership/director.webp",
-    quote: "Our curriculum emphasizes practical problem solving, technical proficiency, and professional leadership.",
-    message: "At AIM Chalisgaon, we groom future IT leaders and business executives through rigorous coursework, practical hands-on laboratory sessions, and continuous mentoring. Affiliated with Kavayitri Bahinabai Chaudhari North Maharashtra University (KBCNMU), Jalgaon, our institute offers industry-relevant programs including BCA, BBA, and MMS. Our dedicated team of faculty members strives to ensure every student gains confidence, practical knowledge, and career readiness.",
+    name: "Prof. Piyush S. Agrawal",
+    role: "I/C Director & Academic Directorate",
+    quote: "Blending technical application mastery with modern business administration skills.",
+    message: "At AIM Chalisgaon, our focus is on ensuring every BCA, BBA, and MMS student gains strong theoretical clarity and practical application experience under KBCNMU guidelines. We mentor students through regular computer lab sessions, academic seminars, and career guidance.",
     visionPoints: [
-      "Student-centric learning environment with regular practical exposure.",
-      "Comprehensive guidance for higher studies and competitive career pathways.",
-      "Focus on holistic personality development, communication skills, and digital literacy."
+      "Strict compliance with KBCNMU Jalgaon curriculum",
+      "Hands-on computer laboratory practicals",
+      "Personality development and student seminars",
+      "Dedicated guidance for higher studies and placement"
     ]
   },
-  viceChairman: {
-    name: "Shri. Rameshchandra Agrawal",
-    title: "Vice Chairman",
-    role: "Vice Chairman, Trust Board",
-    designation: "Vice Chairman",
-    image: "/images/leadership/vice-chairman.webp",
-    message: "AIM stands as a beacon of academic opportunity in Chalisgaon. We constantly upgrade campus infrastructure and student amenities to ensure high-grade learning environments."
-  },
-  secretary: {
-    name: "Shri. Sushil Agrawal",
-    title: "Secretary",
-    role: "Secretary, Trust Board",
-    designation: "Secretary",
-    image: "/images/leadership/secretary.webp",
-    message: "Our administrative commitment is to maintain absolute transparency, student convenience, and high standards of educational discipline."
-  }
+  trustees: [
+    { name: "Sh. Narayanbhau Agrawal", role: "Chairman" },
+    { name: "Sh. Rameshbhau Agrawal", role: "Vice Chairman" },
+    { name: "Sh. Sushilbhau Agrawal", role: "Secretary" },
+    { name: "Sh. Yogesh Agrawal", role: "Jt. Secretary" },
+    { name: "Prof. M. V. Bildikar", role: "Founder Director" },
+    { name: "Prof. Dr. A. B. Deogirkar", role: "Ex-Director" },
+    { name: "Dr. Mandar Kulkarni", role: "Director (On Lien)" }
+  ]
 };
 
-export const PROGRAMS: Program[] = [
+export const PROGRAMS: Course[] = [
   {
     id: "bca",
-    code: "BCA",
     name: "Bachelor of Computer Applications",
+    code: "BCA",
     degree: "Undergraduate Degree",
-    duration: "3 Years (6 Semesters) / NEP 4 Years",
-    affiliation: "KBCNMU Jalgaon",
-    approval: "DTE Maharashtra",
-    description: "A comprehensive undergraduate program focusing on computer programming, database management, web development, software engineering, and core IT infrastructure.",
-    overview: "The BCA program at AIM Chalisgaon equips students with solid foundations in computer computer science, software development, database administration, web programming, and networking technologies. Designed in accordance with North Maharashtra University guidelines, it combines strong theoretical concepts with practical lab sessions.",
+    duration: "3 Years (6 Semesters)",
+    affiliation: "Affiliated with KBCNMU Jalgaon",
+    approval: "Recognized by Govt. of Maharashtra",
+    description: "Comprehensive undergraduate degree program in computer programming, database systems, web development, and software engineering.",
+    overview: "The BCA course at AIM Chalisgaon equips students with core programming principles (C, C++, Java, Python), web design fundamentals, database architecture, and computer networking. Students undertake practical laboratory exercises and university project work.",
     eligibility: [
-      "Passed 10+2 (HSC) Examination or equivalent from a recognized board.",
-      "Minimum qualifying marks as prescribed by KBCNMU Jalgaon & Govt. of Maharashtra guidelines.",
-      "Students from Science, Commerce, or Arts streams with basic mathematics/computer aptitude."
+      "Passed 10+2 (HSC) in any stream (Science, Commerce, Arts) from a recognized board",
+      "Fulfill KBCNMU University merit admission guidelines"
     ],
     highlights: [
-      "Modern Computer Labs equipped with high-speed internet & updated software",
-      "Comprehensive coverage of Java, C++, Python, Web Technologies & Database Systems",
-      "Project work & practical assignments mapped to industry requirements",
-      "Regular guest lectures, seminars, and technical workshops"
-    ],
-    careerOpportunities: [
-      "Software Developer / Programmer",
-      "Web Application Developer",
-      "Database Administrator (DBA)",
-      "System Administrator & Network Specialist",
-      "Data Analyst / Quality Assurance Tester",
-      "Eligible for MCA, MMS, MSc (Computer Science) higher studies"
+      "Hands-on Computer Lab Training",
+      "C, C++, Java, Web Technologies & Database Systems",
+      "Semester Projects & Practical Examination Prep",
+      "Pathway to MCA & IT Software Careers"
     ],
     subjects: [
-      {
-        semester: "Semester I & II",
-        courses: ["Fundamentals of Computer & IT", "Programming in C", "Office Automation Tools", "Basic Mathematics & Statistics", "Digital Electronics", "Communication Skills & Soft Skills"]
-      },
-      {
-        semester: "Semester III & IV",
-        courses: ["Data Structures using C++", "Object Oriented Programming (Java)", "Database Management Systems (DBMS/SQL)", "Web Designing (HTML5, CSS3, JS)", "Operating Systems Architecture", "Software Engineering Principles"]
-      },
-      {
-        semester: "Semester V & VI",
-        courses: ["Python Programming", "Advanced Web Development / PHP", "Computer Networks & Security", "E-Commerce Technologies", "Major Industrial / Software Project", "Practical Lab Work & Seminars"]
-      }
+      { semester: "Semester I & II", courses: ["Computer Fundamentals & C Programming", "Office Automation Tools", "Financial Accounting", "Mathematics for Computer Science", "C Programming Laboratory"] },
+      { semester: "Semester III & IV", courses: ["Data Structures in C++", "Object Oriented Programming (Java)", "Database Management Systems (DBMS)", "Web Designing Fundamentals", "DBMS & Java Lab"] },
+      { semester: "Semester V & VI", courses: ["Software Engineering", "Python Programming", "Computer Networks & Security", "E-Commerce", "Major University Project & Viva-Voce"] }
+    ],
+    careerOpportunities: [
+      "Junior Software Developer",
+      "Web Applications Developer",
+      "Database Administrator Trainee",
+      "Higher Studies (MCA / M.Sc. Computer Science)"
     ]
   },
   {
     id: "bba",
-    code: "BBA",
     name: "Bachelor of Business Administration",
+    code: "BBA",
     degree: "Undergraduate Degree",
-    duration: "3 Years (6 Semesters) / NEP 4 Years",
-    affiliation: "KBCNMU Jalgaon",
-    approval: "DTE Maharashtra",
-    description: "A premier management program designed to nurture managerial acumen, entrepreneurial spirit, financial literacy, and marketing strategy in future business leaders.",
-    overview: "The BBA program at AIM Chalisgaon builds strong business acumen, management principles, financial accounting, marketing strategies, and human resource dynamics. It offers students deep insights into corporate management, small business management, and analytical decision-making.",
+    duration: "3 Years (6 Semesters)",
+    affiliation: "Affiliated with KBCNMU Jalgaon",
+    approval: "Recognized by Govt. of Maharashtra",
+    description: "Professional degree program focusing on business management, marketing, financial accounting, and organizational behavior.",
+    overview: "The BBA program prepares students for enterprise administration, retail management, sales strategies, and business communication. It blends theoretical management models with case studies, group presentations, and industrial exposure.",
     eligibility: [
-      "Passed 10+2 (HSC) Examination in any stream (Commerce, Arts, Science) from a recognized Board.",
-      "Admissions governed as per KBCNMU Jalgaon university eligibility criteria."
+      "Passed 10+2 (HSC) in any stream from a recognized educational board",
+      "Compliance with KBCNMU admission criteria"
     ],
     highlights: [
-      "Strong grounding in Financial Management, Marketing & HR Principles",
-      "Interactive case studies, group discussions, and leadership exercises",
-      "Soft skills training, corporate presentation skills, and business communication",
-      "Industry visits, seminars, and entrepreneurship development workshops"
-    ],
-    careerOpportunities: [
-      "Management Trainee / Junior Executive",
-      "Marketing & Sales Specialist",
-      "Financial Analyst / Relationship Manager",
-      "Human Resource Executive",
-      "Business Operations Associate / Entrepreneur",
-      "Direct pathway for MBA / MMS / PGDM higher education"
+      "Core Business Management & Organizational Dynamics",
+      "Principles of Marketing & Financial Accounting",
+      "Business Communication & Seminar Presentations",
+      "Pathway to MBA & Corporate Management Careers"
     ],
     subjects: [
-      {
-        semester: "Semester I & II",
-        courses: ["Principles of Management", "Financial Accounting", "Business Economics (Micro)", "Business Communication", "Computer Applications in Business", "Business Mathematics"]
-      },
-      {
-        semester: "Semester III & IV",
-        courses: ["Marketing Management", "Human Resource Management", "Cost & Management Accounting", "Business Law & Corporate Governance", "Business Economics (Macro)", "Organizational Behavior"]
-      },
-      {
-        semester: "Semester V & VI",
-        courses: ["Financial Management", "Entrepreneurship Development", "Services Marketing & Retailing", "Research Methodology", "Project Report & Industrial Training", "Comprehensive Viva-Voce"]
-      }
+      { semester: "Semester I & II", courses: ["Principles of Management", "Business Communication", "Financial Accounting", "Micro Economics", "Computer Applications in Business"] },
+      { semester: "Semester III & IV", courses: ["Marketing Management", "Human Resource Management (HRM)", "Business Law", "Management Accounting", "Business Statistics"] },
+      { semester: "Semester V & VI", courses: ["Strategic Management", "Entrepreneurship Development", "Financial Management", "International Business", "Project Study & Viva"] }
+    ],
+    careerOpportunities: [
+      "Business Operations Assistant",
+      "Sales & Marketing Representative",
+      "HR Administrator Trainee",
+      "Higher Studies (MBA / MMS)"
     ]
   },
   {
     id: "mms",
-    code: "MMS",
-    name: "Master of Management Studies (Computer Management)",
-    degree: "Postgraduate Program",
+    name: "Master of Management Studies (CM)",
+    code: "MMS (CM)",
+    degree: "Postgraduate Degree",
     duration: "2 Years (4 Semesters)",
-    affiliation: "KBCNMU Jalgaon",
-    approval: "Recognized by DTE Maharashtra",
-    description: "An advanced postgraduate program combining management strategic decision-making with specialized computer systems management and IT management.",
-    overview: "The MMS program provides advanced expertise bridging business management with information technology. Designed for graduates seeking managerial positions in IT firms, system administration, and enterprise resource planning.",
+    affiliation: "Affiliated with KBCNMU Jalgaon",
+    approval: "Recognized by Govt. of Maharashtra / DTE Code 5162",
+    description: "Postgraduate master's degree integrating advanced business management with computer management applications.",
+    overview: "MMS (Computer Management) is designed for graduates seeking specialized managerial roles at the intersection of business strategy and information technology. It emphasizes enterprise resource planning, IT project management, and strategic decision making.",
     eligibility: [
-      "Bachelor's Degree (BCA, BBA, BSc, BCom, BA, BE) from a recognized University.",
-      "Qualified as per KBCNMU Jalgaon admission directives."
+      "Bachelor's Degree in any discipline from a recognized University",
+      "As per KBCNMU and DTE Maharashtra postgraduate admission directives"
     ],
     highlights: [
-      "Advanced curriculum in Management Information Systems (MIS) & Enterprise Systems",
-      "Strategic IT Management & Project Planning",
-      "In-depth Database Administration & Systems Analysis",
-      "Research orientation & Managerial Project Work"
-    ],
-    careerOpportunities: [
-      "IT Project Manager",
-      "Systems Analyst & IT Consultant",
-      "MIS Manager / Operations Lead",
-      "Enterprise Resource Manager",
-      "Senior Business Analyst"
+      "Advanced Management Systems & Enterprise IT",
+      "Systems Analysis & Strategic Management",
+      "Research Methodology & Project Management",
+      "Preparation for Executive & IT Management Roles"
     ],
     subjects: [
-      {
-        semester: "Semester I & II",
-        courses: ["Management Information Systems (MIS)", "Advanced Database Systems", "Organizational Behavior & IT", "Software Project Management", "Managerial Economics"]
-      },
-      {
-        semester: "Semester III & IV",
-        courses: ["Enterprise Resource Planning (ERP)", "Information Security & Audit", "Business Intelligence", "Dissertation & Industrial Project", "Seminar & Research Methodology"]
-      }
+      { semester: "Semester I & II", courses: ["Management Information Systems (MIS)", "Advanced Computer Architecture", "Quantitative Techniques", "Organizational Behavior", "Database Systems"] },
+      { semester: "Semester III & IV", courses: ["Enterprise Resource Planning (ERP)", "Software Project Management", "Strategic Management", "System Analysis & Design", "Master's Dissertation Project"] }
+    ],
+    careerOpportunities: [
+      "IT Project Executive",
+      "Systems Analyst",
+      "Management Consultant Trainee",
+      "Enterprise Systems Specialist"
     ]
   }
 ];
 
 export const FACULTY_LIST: FacultyMember[] = [
   {
-    id: "f1",
-    name: "Dr. Rahul Kulkarni",
-    designation: "Director & Professor",
-    department: "Computer Management & IT",
-    qualification: "Ph.D., M.M.S., M.C.M.",
-    experience: "20+ Years Academic & Administrative Experience",
-    specialization: "Management Information Systems, Strategic IT"
-  },
-  {
-    id: "f2",
-    name: "Dr. Shrikant S. Bhandari",
-    designation: "Director I/C & Associate Professor",
-    department: "Management Studies",
-    qualification: "Ph.D., MBA, M.Com.",
-    experience: "18+ Years",
-    specialization: "Financial Management & Business Economics"
-  },
-  {
-    id: "f3",
+    id: "fac-1",
     name: "Prof. Piyush S. Agrawal",
-    designation: "HOD & Dy. Director",
-    department: "Computer Applications (BCA)",
-    qualification: "M.C.M., M.Sc. (Comp. Sci.)",
-    experience: "15+ Years",
-    specialization: "Database Management Systems, Software Engineering"
+    designation: "I/C Director & Assistant Professor",
+    qualification: "MBM, Ph.D. Scholar",
+    department: "Management Studies",
+    specialization: "Business Administration & Management Information Systems",
+    experience: "15+ Years Academic & Administrative Experience"
   },
   {
-    id: "f4",
+    id: "fac-2",
+    name: "Dr. Mandar Kulkarni",
+    designation: "Director (On Lien) & Associate Professor",
+    qualification: "Ph.D., FIETE",
+    department: "Computer Applications",
+    specialization: "Computer Science & Communication Systems",
+    experience: "18+ Years Higher Education Experience"
+  },
+  {
+    id: "fac-3",
+    name: "Dr. Shrikant S. Bhandari",
+    designation: "Associate Professor",
+    qualification: "Ph.D., M.Com, MBM",
+    department: "Management Studies",
+    specialization: "Financial Management & Business Economics",
+    experience: "14+ Years Teaching Experience"
+  },
+  {
+    id: "fac-4",
     name: "Prof. Anil Mahajan",
     designation: "Assistant Professor",
+    qualification: "MCA, M.Sc. (Comp. Sci.)",
     department: "Computer Applications",
-    qualification: "M.C.A., M.Sc.",
-    experience: "12+ Years",
-    specialization: "C/C++, Java Programming & Web Development"
+    specialization: "C, C++, Java Programming & Web Development",
+    experience: "12+ Years Teaching Experience"
   },
   {
-    id: "f5",
-    name: "Dr. Mandar Kulkarni",
+    id: "fac-5",
+    name: "Prof. Meenal Gune",
     designation: "Assistant Professor",
-    department: "Management Studies (BBA)",
-    qualification: "Ph.D., MBA",
-    experience: "10+ Years",
-    specialization: "Marketing Management & Entrepreneurship"
+    qualification: "M.Com, MBM",
+    department: "Management Studies",
+    specialization: "Accounting, HR & Marketing Management",
+    experience: "10+ Years Teaching Experience"
   },
   {
-    id: "f6",
+    id: "fac-6",
     name: "Prof. Snehal Kambale",
     designation: "Assistant Professor",
+    qualification: "MCA",
     department: "Computer Applications",
-    qualification: "M.C.A.",
-    experience: "8+ Years",
-    specialization: "Python Programming & Networking"
-  },
-  {
-    id: "f7",
-    name: "Prof. Gayatri Bhosale",
-    designation: "Assistant Professor",
-    department: "Management Studies",
-    qualification: "MBA, M.Com",
-    experience: "7+ Years",
-    specialization: "Human Resource Management & Business Law"
+    specialization: "Database Management Systems & Software Engineering",
+    experience: "8+ Years Teaching Experience"
   }
 ];
 
-export const NOTICES: NoticeItem[] = [
+export const CAMPUS_FACILITIES: Facility[] = [
   {
-    id: "n1",
-    title: "BCA & BBA First Year Admissions Open for Academic Year 2026-27",
-    date: "15 Sep 2026",
-    category: "Admissions",
-    description: "Applications are invited for first year BCA and BBA courses affiliated with KBCNMU Jalgaon. Contact college office or submit online enquiry.",
-    isImportant: true
-  },
-  {
-    id: "n2",
-    title: "KBCNMU Semester Examination Schedule Notification",
-    date: "02 Sep 2026",
-    category: "Examination",
-    description: "Students are informed to check the upcoming university semester exam form submission deadlines and guidelines.",
-    isImportant: true
-  },
-  {
-    id: "n3",
-    title: "Campus Technical Workshop on Web Development & Python",
-    date: "20 Aug 2026",
-    category: "Events",
-    description: "A 3-day practical hands-on technical seminar organized by Department of Computer Applications for BCA/MMS students."
-  },
-  {
-    id: "n4",
-    title: "Submission of Scholarship & Freeship Forms for Academic Year 2026-27",
-    date: "10 Aug 2026",
-    category: "General",
-    description: "Eligible SC/ST/OBC/EBC category students must submit MahaDBT scholarship documents to the admin office."
-  }
-];
-
-export const DOWNLOADS: DownloadItem[] = [
-  {
-    id: "d1",
-    title: "AIM College Prospectus & Admission Information Brochure",
-    category: "Admission",
-    fileFormat: "PDF",
-    fileSize: "2.4 MB",
-    uploadDate: "2026",
-    link: "#"
-  },
-  {
-    id: "d2",
-    title: "KBCNMU BCA Course Syllabus Structure (NEP Compliant)",
-    category: "Syllabus",
-    fileFormat: "PDF",
-    fileSize: "1.1 MB",
-    uploadDate: "2026",
-    link: "#"
-  },
-  {
-    id: "d3",
-    title: "KBCNMU BBA Course Syllabus & Examination Scheme",
-    category: "Syllabus",
-    fileFormat: "PDF",
-    fileSize: "980 KB",
-    uploadDate: "2026",
-    link: "#"
-  },
-  {
-    id: "d4",
-    title: "Admission Enquiry & Application Registration Form",
-    category: "Forms",
-    fileFormat: "PDF",
-    fileSize: "450 KB",
-    uploadDate: "2026",
-    link: "#"
-  },
-  {
-    id: "d5",
-    title: "MahaDBT Scholarship Document Checklist & Undertaking Form",
-    category: "Forms",
-    fileFormat: "PDF",
-    fileSize: "320 KB",
-    uploadDate: "2026",
-    link: "#"
-  }
-];
-
-export const CAMPUS_FACILITIES: CampusFacility[] = [
-  {
-    id: "computer-lab",
-    name: "Modern Computer Laboratories",
-    tagline: "High-speed connected IT infrastructure",
-    description: "Equipped with high-performance desktop computers, high-speed broadband internet, updated software suites, and dedicated practical programming environments for BCA and MMS students.",
-    features: ["Dedicated computer terminals", "High-speed LAN & Wi-Fi internet", "Latest IDEs, SQL Server, Python & Web software", "Uninterrupted power supply (UPS) backup"],
-    icon: "Monitor"
+    id: "comp-lab",
+    name: "Computer Laboratory",
+    tagline: "MODERN DIGITAL COMPUTING LABS",
+    description: "Equipped with desktop systems, high-speed LAN, software tools (C++, Java, Python, DBMS), and uninterrupted power backup for practical laboratory coursework.",
+    image: "/images/computer-lab.png",
+    icon: "Monitor",
+    features: [
+      "Modern PC Systems with LAN Connectivity",
+      "Programming Compilers & DBMS Development Tools",
+      "Dedicated Practical Hours for BCA & MMS",
+      "Power Backup & Technical Support Staff"
+    ]
   },
   {
     id: "library",
     name: "Central Academic Library",
-    tagline: "Comprehensive repository of books & journals",
-    description: "Houses thousands of textbooks, reference books, management journals, technical magazines, and national newspapers, providing a quiet reading space for students.",
-    features: ["Standard textbooks for BCA, BBA & MMS", "Reference books by renowned international authors", "Business magazines & academic research journals", "Digital cataloging & comfortable reading section"],
-    icon: "BookOpenCheck"
+    tagline: "KNOWLEDGE & REFERENCE REPOSITORY",
+    description: "Features reference books, university recommended textbooks, academic journals, periodicals, and reading room facilities for quiet study.",
+    image: "/images/library.png",
+    icon: "BookOpenCheck",
+    features: [
+      "Textbooks & Reference Books for BCA/BBA/MMS",
+      "Academic Journals & Periodicals",
+      "Spacious Quiet Reading Room Facilities",
+      "Book Bank Facility for Students"
+    ]
   },
   {
     id: "seminar-hall",
-    name: "AV Seminar Hall & Conference Room",
-    tagline: "State-of-the-art presentation space",
-    description: "Air-conditioned seminar hall equipped with LCD projectors, audio-visual systems, and seating capacity for academic seminars, guest lectures, and student presentations.",
-    features: ["Multimedia LCD projection system", "Acoustic sound system & microphones", "Capacity for 150+ attendees", "Ideal for guest lectures & workshops"],
-    icon: "Presentation"
+    name: "Audio-Visual Seminar Hall",
+    tagline: "MULTIPURPOSE CONFERENCE VENUE",
+    description: "A well-appointed audio-visual seminar hall used for academic guest lectures, student presentations, workshops, and institutional meetings.",
+    image: "/images/seminar-hall.png",
+    icon: "Presentation",
+    features: [
+      "AV Projection & Sound System",
+      "Host for Guest Seminars & Workshops",
+      "Student Presentations & Cultural Events",
+      "Seating Capacity for College Gatherings"
+    ]
+  }
+];
+
+export const NOTICES: Notice[] = [
+  {
+    id: "notice-1",
+    title: "Admissions Open AY 2026-27 - BCA, BBA & MMS Programs",
+    date: "Academic Session 2026-27",
+    category: "Current Admission",
+    description: "Eligible candidates seeking admission to BCA, BBA, and MMS degree programs are invited to submit their admission enquiry at the college office on Ghat Road, Chalisgaon.",
+    isImportant: true
   },
   {
-    id: "sports-cultural",
-    name: "Sports & Cultural Infrastructure",
-    tagline: "Holistic student physical & creative development",
-    description: "Facilities for indoor games (Table Tennis, Chess, Carrom) and outdoor sports, alongside annual cultural events, sports meets, and youth festival participation.",
-    features: ["Indoor game equipment", "Annual sports gathering events", "Cultural fest & personality development programs", "Student activity committee guidance"],
-    icon: "Trophy"
+    id: "notice-2",
+    title: "KBCNMU Semester Examination Guidelines & Schedule Bulletin",
+    date: "University Circular 2026",
+    category: "Exam Notification",
+    description: "Students are instructed to submit university semester examination forms within the designated timeline as notified by Kavayitri Bahinabai Chaudhari North Maharashtra University Jalgaon."
+  },
+  {
+    id: "notice-3",
+    title: "MahaDBT Scholarship & Freeship Application Portal Open",
+    date: "State Govt. Directive",
+    category: "Academic Bulletin",
+    description: "SC / ST / OBC / EBC category students are advised to submit their online scholarship forms on MahaDBT portal and submit physical copies to the college registrar desk."
+  },
+  {
+    id: "notice-4",
+    title: "KBCNMU BBA & BCA Structure Equivalence Syllabus Archive (2017-18 / 2019-20)",
+    date: "University Reference",
+    category: "Historical Circular",
+    description: "Official university course equivalence structures and syllabus archives approved by North Maharashtra University for BCA, BBA, and DCM diploma programs."
+  }
+];
+
+export const DOWNLOADS: DownloadableDoc[] = [
+  {
+    id: "doc-1",
+    title: "B.C.A. Course Syllabus (KBCNMU Approved)",
+    category: "Official Syllabus",
+    fileSize: "PDF Document",
+    fileFormat: "PDF",
+    link: "https://img1.wsimg.com/blobby/go/c0e5b37f-d6e4-4a52-8877-263037f75599/downloads/1cm7bt76b_237734.pdf?ver=1599889140266",
+    isAvailable: true
+  },
+  {
+    id: "doc-2",
+    title: "B.B.A. Structure, Equivalence & Syllabus",
+    category: "Official Syllabus",
+    fileSize: "PDF Document",
+    fileFormat: "PDF",
+    link: "https://img1.wsimg.com/blobby/go/c0e5b37f-d6e4-4a52-8877-263037f75599/downloads/2017-18%20BBA%20Structure%2C%20Equivalence%20and%20%20Syllab.pdf?ver=1599889140267",
+    isAvailable: true
+  },
+  {
+    id: "doc-3",
+    title: "Diploma in Computer Management (D.C.M.) Syllabus",
+    category: "Diploma Curriculum",
+    fileSize: "PDF Document",
+    fileFormat: "PDF",
+    link: "https://img1.wsimg.com/blobby/go/c0e5b37f-d6e4-4a52-8877-263037f75599/downloads/2019-20%20Diploma%20in%20Management%20(D.C.M).pdf?ver=1599889140267",
+    isAvailable: true
+  },
+  {
+    id: "doc-4",
+    title: "YCMOU M.B.A. Program Curriculum",
+    category: "YCMOU Academic",
+    fileSize: "PDF Document",
+    fileFormat: "PDF",
+    link: "https://img1.wsimg.com/blobby/go/c0e5b37f-d6e4-4a52-8877-263037f75599/downloads/1cm7cmrrh_449328.pdf?ver=1599889140267",
+    isAvailable: true
+  },
+  {
+    id: "doc-5",
+    title: "Vijeta Annual College Magazine",
+    category: "College Publication",
+    fileSize: "PDF Magazine",
+    fileFormat: "PDF",
+    link: "https://img1.wsimg.com/blobby/go/c0e5b37f-d6e4-4a52-8877-263037f75599/downloads/Vijeta%20Magazine%202018-19.pdf?ver=1599889140267",
+    isAvailable: true
   }
 ];
 
 export const FAQS = [
   {
-    q: "What undergraduate degree courses are offered at AIM Chalisgaon?",
-    a: "AIM Chalisgaon offers BCA (Bachelor of Computer Applications) and BBA (Bachelor of Business Administration), both affiliated with Kavayitri Bahinabai Chaudhari North Maharashtra University (KBCNMU), Jalgaon."
+    q: "Which university is AIM Chalisgaon affiliated with?",
+    a: "AIM Chalisgaon is affiliated with Kavayitri Bahinabai Chaudhari North Maharashtra University (KBCNMU), Jalgaon, and recognized by DTE Govt. of Maharashtra (DTE Institute Code 5162)."
   },
   {
-    q: "Is AIM Chalisgaon affiliated with KBCNMU Jalgaon?",
-    a: "Yes, Smt. S. M. Agrawal Institute of Management is permanently/regularly affiliated with Kavayitri Bahinabai Chaudhari North Maharashtra University (KBCNMU), Jalgaon, and recognized by the Directorate of Technical Education (DTE), Govt. of Maharashtra."
+    q: "What degree programs are offered at AIM Chalisgaon?",
+    a: "The institute offers Bachelor of Computer Applications (BCA), Bachelor of Business Administration (BBA), and Master of Management Studies (MMS - Computer Management)."
   },
   {
-    q: "What is the eligibility for BCA and BBA admission?",
-    a: "For BCA and BBA programs, candidates who have passed 10+2 (HSC) in Science, Commerce, or Arts from a recognized board are eligible, subject to university norms."
+    q: "Are Government scholarships available for SC/ST/OBC students?",
+    a: "Yes. Eligible candidates can apply for Maharashtra State MahaDBT Post-Matric Scholarships and Freeships as per Government rules."
   },
   {
-    q: "How can I apply for admission or enquire about fees?",
-    a: "You can submit an enquiry through our online Admission Enquiry Form on this website, visit the campus office at Ghat Road Chalisgaon, or call our admission helpdesk at +91 77700 81314 / +91 73500 76444."
+    q: "How can I submit an admission enquiry?",
+    a: "You can submit an online enquiry form through our website or visit the college office on Ghat Road, Opp. Market Yard, Chalisgaon, Jalgaon."
   }
 ];

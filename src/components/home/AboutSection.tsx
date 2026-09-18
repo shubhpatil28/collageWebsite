@@ -1,14 +1,13 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { SITE_INFO } from "@/data/site-content";
 import {
   Building2,
   ShieldCheck,
-  Award,
   GraduationCap,
   ArrowRight,
-  CheckCircle2,
   Users,
   Target
 } from "lucide-react";
@@ -27,13 +26,24 @@ export default function AboutSection() {
 
         <div className="mt-14 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           
-          {/* Left Column: Visual Highlight Card */}
+          {/* Left Column: Visual Highlight Card with Image */}
           <div className="lg:col-span-5">
-            <div className="relative rounded-2xl bg-[#0A192F] text-white p-8 space-y-6 shadow-2xl border border-slate-800 overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="relative rounded-2xl bg-[#0A192F] text-white p-6 sm:p-8 space-y-6 shadow-2xl border border-slate-800 overflow-hidden">
+              
+              {/* Campus Building Thumbnail */}
+              <div className="relative w-full h-48 rounded-xl overflow-hidden border border-slate-700">
+                <Image
+                  src="/images/aim-building.png"
+                  alt="Smt. S. M. Agrawal Institute of Management Chalisgaon Campus Building"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 40vw"
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0A192F] via-transparent to-transparent opacity-80" />
+              </div>
 
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-slate-950 font-black text-2xl shadow-lg">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-slate-950 font-black text-2xl shadow-lg shrink-0">
                   2001
                 </div>
                 <div>
@@ -43,7 +53,7 @@ export default function AboutSection() {
               </div>
 
               <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                Founded by the <strong>{SITE_INFO.trust}</strong>, AIM Chalisgaon has consistently empowered thousands of students with industry-relevant computer science skills and business leadership capabilities.
+                Founded by <strong>{SITE_INFO.trust}</strong>, AIM Chalisgaon empowers students with university-aligned computer science skills and business leadership capabilities.
               </p>
 
               <div className="space-y-3 border-t border-slate-800 pt-6">
@@ -87,7 +97,7 @@ export default function AboutSection() {
                 </div>
                 <h3 className="text-lg font-bold text-slate-900">Academic Excellence</h3>
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Strictly aligned with North Maharashtra University curriculum, featuring regular internal assessments, semester exams, and practical lab training.
+                  Strictly aligned with KBCNMU North Maharashtra University curriculum, featuring internal assessments, semester exams, and practical lab training.
                 </p>
               </div>
 
@@ -97,7 +107,7 @@ export default function AboutSection() {
                 </div>
                 <h3 className="text-lg font-bold text-slate-900">Experienced Faculty</h3>
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Qualified professors and instructors dedicated to personalized student mentoring, project guidance, and skill enhancements.
+                  Qualified professors and instructors dedicated to personalized student mentoring, practical project guidance, and skill enhancement.
                 </p>
               </div>
 
@@ -107,7 +117,7 @@ export default function AboutSection() {
                 </div>
                 <h3 className="text-lg font-bold text-slate-900">Modern Infrastructure</h3>
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Equipped computer laboratories, academic library, AV seminar hall, and spacious campus located conveniently near Aurangabad Road Chalisgaon.
+                  Equipped computer laboratories, central academic library, AV seminar hall, and campus located conveniently near Market Yard Chalisgaon.
                 </p>
               </div>
 
@@ -117,7 +127,7 @@ export default function AboutSection() {
                 </div>
                 <h3 className="text-lg font-bold text-slate-900">Career Readiness</h3>
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Focused on preparing graduates for IT jobs, corporate management roles, higher studies (MCA/MBA), and competitive examinations.
+                  Focused on preparing graduates for IT software jobs, enterprise management roles, higher studies (MCA/MBA), and competitive examinations.
                 </p>
               </div>
 
