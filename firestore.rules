@@ -1,0 +1,49 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper function to check if request is from an authenticated user
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper function to check if request is from an active admin
+    function isAdmin() {
+      return isAuthenticated() &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == "admin" &&
+        get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.active == true;
+    }
+
+    // Collection: admission_enquiries
+    match /admission_enquiries/{enquiryId} {
+      // Public users can ONLY create admission enquiries
+      allow create: if true
+                    && request.resource.data.fullName is string
+                    && request.resource.data.fullName.size() >= 2
+                    && request.resource.data.mobile is string
+                    && request.resource.data.mobile.size() == 10
+                    && request.resource.data.email is string
+                    && request.resource.data.program is string
+                    && request.resource.data.status == "new";
+
+      // Only authenticated & active admins can read, update, or delete enquiries
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Collection: admins
+    match /admins/{userId} {
+      // Admins can read their own document to verify authorization
+      allow read: if isAuthenticated() && request.auth.uid == userId;
+
+      // Full admin write access only by existing active admins
+      allow write: if isAdmin();
+    }
+
+    // Default deny all other paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
