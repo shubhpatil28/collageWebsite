@@ -11,7 +11,8 @@ import {
   Building2,
   ExternalLink,
   ChevronRight,
-  FileText
+  FileText,
+  Lock
 } from "lucide-react";
 
 export default function Footer() {
@@ -163,7 +164,7 @@ export default function Footer() {
           <p>
             © {new Date().getFullYear()} {SITE_INFO.name}, Chalisgaon. Managed by {SITE_INFO.trust}.
           </p>
-          <div className="flex items-center space-x-6">
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs">
             <Link href="/about/recognition" className="hover:text-amber-400 transition-colors">
               Affiliation & Recognition
             </Link>
@@ -172,6 +173,13 @@ export default function Footer() {
             </Link>
             <Link href="/contact" className="hover:text-amber-400 transition-colors">
               Admission Helpline
+            </Link>
+            <Link
+              href="/admin/login"
+              className="text-slate-500 hover:text-amber-400 transition-colors flex items-center gap-1 font-medium group"
+            >
+              <Lock className="w-3 h-3 text-slate-600 group-hover:text-amber-400 transition-colors" />
+              <span>Admin Portal</span>
             </Link>
           </div>
         </div>
