@@ -52,7 +52,7 @@ export default function ChairmanPage() {
                 Institutional Philosophy
               </div>
               <p className="text-base sm:text-lg italic font-semibold">
-                "{chairman.quote}"
+                &quot;{chairman.quote}&quot;
               </p>
             </div>
           )}
@@ -95,7 +95,7 @@ export default function ChairmanPage() {
               href="/about/director"
               className="inline-flex items-center gap-1.5 font-bold text-amber-700 hover:text-amber-800 transition-colors"
             >
-              Read Director's Message
+              Read Director&apos;s Message
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>

@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MAIN_NAVIGATION, NavItem } from "@/data/navigation";
+import { MAIN_NAVIGATION } from "@/data/navigation";
 import { SITE_INFO } from "@/data/site-content";
 import {
   Menu,
@@ -14,10 +14,8 @@ import {
   PhoneCall,
   Mail,
   Clock,
-  Sparkles,
   ArrowRight,
-  ShieldCheck,
-  Building2
+  ShieldCheck
 } from "lucide-react";
 
 export default function Navbar() {
@@ -36,8 +34,11 @@ export default function Navbar() {
 
   // Close mobile drawer on route change
   useEffect(() => {
-    setMobileMenuOpen(false);
-    setActiveDropdown(null);
+    const timer = setTimeout(() => {
+      setMobileMenuOpen(false);
+      setActiveDropdown(null);
+    }, 0);
+    return () => clearTimeout(timer);
   }, [pathname]);
 
   return (

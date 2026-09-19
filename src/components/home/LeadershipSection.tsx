@@ -39,7 +39,7 @@ export default function LeadershipSection() {
 
               {chairman.quote && (
                 <p className="text-sm italic font-medium text-amber-200/90 border-l-2 border-amber-500 pl-3">
-                  "{chairman.quote}"
+                  &quot;{chairman.quote}&quot;
                 </p>
               )}
 
@@ -78,7 +78,7 @@ export default function LeadershipSection() {
 
               {director.quote && (
                 <p className="text-sm italic font-medium text-amber-200/90 border-l-2 border-amber-500 pl-3">
-                  "{director.quote}"
+                  &quot;{director.quote}&quot;
                 </p>
               )}
 

@@ -100,11 +100,29 @@ export default function AdmissionsEnquiryForm() {
     }
 
     try {
+      const sanitizedFullName = formData.fullName.trim();
+      const sanitizedMobile = formData.mobile.replace(/\D/g, "").trim();
+      const sanitizedEmail = formData.email.trim().toLowerCase();
+      const sanitizedProgram = formData.program.trim();
+
+      // Strict client-side validation against Firestore Security Rules schema
+      if (sanitizedFullName.length < 2) {
+        setErrorMessage("Full candidate name must be at least 2 characters.");
+        setStatus("error");
+        return;
+      }
+
+      if (sanitizedMobile.length !== 10) {
+        setErrorMessage("Mobile number must be exactly 10 digits.");
+        setStatus("error");
+        return;
+      }
+
       const enquiryPayload = {
-        fullName: formData.fullName.trim(),
-        mobile: formData.mobile.trim(),
-        email: formData.email.trim().toLowerCase(),
-        program: formData.program,
+        fullName: sanitizedFullName,
+        mobile: sanitizedMobile,
+        email: sanitizedEmail,
+        program: sanitizedProgram,
         message: formData.message.trim(),
         status: "new",
         source: "website",
@@ -113,16 +131,21 @@ export default function AdmissionsEnquiryForm() {
         updatedAt: serverTimestamp(),
       };
 
+      // Execute Firestore write
       await addDoc(collection(db, "admission_enquiries"), enquiryPayload);
 
-      // Trigger notification hook stub
-      notifyNewAdmissionEnquiry({
-        fullName: enquiryPayload.fullName,
-        mobile: enquiryPayload.mobile,
-        email: enquiryPayload.email,
-        program: enquiryPayload.program,
-        message: enquiryPayload.message,
-      });
+      // Trigger notification stub safely (non-blocking)
+      try {
+        await notifyNewAdmissionEnquiry({
+          fullName: enquiryPayload.fullName,
+          mobile: enquiryPayload.mobile,
+          email: enquiryPayload.email,
+          program: enquiryPayload.program,
+          message: enquiryPayload.message,
+        });
+      } catch (notifErr) {
+        console.warn("Non-fatal notification stub warning:", notifErr);
+      }
 
       // Store submit timestamp for cooldown
       if (typeof window !== "undefined") {
@@ -132,14 +155,22 @@ export default function AdmissionsEnquiryForm() {
 
       setStatus("success");
     } catch (err: unknown) {
-      console.error("Firestore Admission Enquiry Submission Error:", err);
-      const isDev = process.env.NODE_ENV !== "production";
-      const devErrMsg = err instanceof Error ? err.message : "Failed to submit enquiry to Firestore.";
-      const userErrMsg = "Unable to submit your enquiry at this moment due to a network or database error. Please try again or call our helpdesk directly.";
+      const errCode = (err as { code?: string })?.code || "unknown";
+      const errDetail = err instanceof Error ? err.message : String(err);
+      console.error(`Firestore Admission Enquiry Error [Code: ${errCode}]:`, errDetail, err);
 
-      setErrorMessage(isDev ? `[Dev Error] ${devErrMsg}` : userErrMsg);
+      const isDev = process.env.NODE_ENV !== "production";
+      let userErrMsg = "Unable to submit your enquiry at this moment due to a network or database error. Please try again or call our helpdesk directly.";
+
+      if (errCode === "permission-denied") {
+        userErrMsg = "Enquiry submission was declined by database security rules. Please verify your details or call our helpdesk directly.";
+      } else if (errCode === "unavailable") {
+        userErrMsg = "Database network service is temporarily unavailable. Please check your internet connection or call our helpdesk.";
+      }
+
+      setErrorMessage(isDev ? `[Dev Error ${errCode}] ${errDetail}` : userErrMsg);
       setStatus("error");
-      // Preserve form data so user can retry!
+      // Form data is preserved for retry!
     }
   };
 

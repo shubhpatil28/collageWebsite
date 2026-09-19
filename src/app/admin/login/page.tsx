@@ -20,8 +20,8 @@ export default function AdminLoginPage() {
   // Check if already authenticated and authorized
   useEffect(() => {
     if (!auth) {
-      setInitialChecking(false);
-      return;
+      const timer = setTimeout(() => setInitialChecking(false), 0);
+      return () => clearTimeout(timer);
     }
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {

@@ -135,13 +135,13 @@ export default function AboutPage() {
               href="/about/chairman"
               className="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs transition-colors"
             >
-              Chairman's Message
+              Chairman&apos;s Message
             </Link>
             <Link
               href="/about/director"
               className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs border border-slate-700 transition-colors"
             >
-              Director's Message
+              Director&apos;s Message
             </Link>
           </div>
         </div>

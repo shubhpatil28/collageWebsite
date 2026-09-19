@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { auth, db, isFirebaseConfigured } from "@/lib/firebase";
@@ -77,9 +77,11 @@ export default function AdminDashboardPage() {
   // Check auth & admin authorization
   useEffect(() => {
     if (!auth) {
-      setAuthLoading(false);
-      router.replace("/admin/login");
-      return;
+      const timer = setTimeout(() => {
+        setAuthLoading(false);
+        router.replace("/admin/login");
+      }, 0);
+      return () => clearTimeout(timer);
     }
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -106,7 +108,7 @@ export default function AdminDashboardPage() {
   }, [router]);
 
   // Fetch enquiries from Firestore
-  const fetchEnquiries = async () => {
+  const fetchEnquiries = useCallback(async () => {
     if (!db) {
       setDataLoading(false);
       setDataError("Firebase Firestore database is not configured.");
@@ -146,13 +148,16 @@ export default function AdminDashboardPage() {
     } finally {
       setDataLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (currentUser && adminProfile) {
-      fetchEnquiries();
+      const timer = setTimeout(() => {
+        fetchEnquiries();
+      }, 0);
+      return () => clearTimeout(timer);
     }
-  }, [currentUser, adminProfile]);
+  }, [currentUser, adminProfile, fetchEnquiries]);
 
   // Derive Statistics from real data ONLY
   const stats = useMemo(() => {

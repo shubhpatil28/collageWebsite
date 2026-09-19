@@ -261,12 +261,12 @@ export const FACULTY_LIST: FacultyMember[] = [
   },
   {
     id: "fac-5",
-    name: "Prof. Meenal Gune",
+    name: "Prof. Gayatri Bhosale",
     designation: "Assistant Professor",
-    qualification: "M.Com, MBM",
-    department: "Management Studies",
-    specialization: "Accounting, HR & Marketing Management",
-    experience: "10+ Years Teaching Experience"
+    qualification: "BCA, MCA",
+    department: "Computer Applications",
+    specialization: "Computer Science & Software Applications",
+    experience: "Academic Faculty Member"
   },
   {
     id: "fac-6",

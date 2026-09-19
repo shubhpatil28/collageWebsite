@@ -52,7 +52,7 @@ export default function DirectorPage() {
                 Academic Approach
               </div>
               <p className="text-base sm:text-lg italic font-semibold">
-                "{director.quote}"
+                &quot;{director.quote}&quot;
               </p>
             </div>
           )}
@@ -63,7 +63,7 @@ export default function DirectorPage() {
             </h3>
             <p>{director.message}</p>
             <p>
-              In today's fast-evolving digital era, higher education must combine technical mastery with practical adaptability. At AIM Chalisgaon, our curriculum for BCA, BBA, and MMS is tailored to ensure students develop solid programming foundations, analytical business acumen, and strong soft skills.
+              In today&apos;s fast-evolving digital era, higher education must combine technical mastery with practical adaptability. At AIM Chalisgaon, our curriculum for BCA, BBA, and MMS is tailored to ensure students develop solid programming foundations, analytical business acumen, and strong soft skills.
             </p>
           </div>
 
