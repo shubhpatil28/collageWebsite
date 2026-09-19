@@ -126,7 +126,7 @@ export default function AboutPage() {
           <div className="space-y-1">
             <h3 className="text-xl font-bold text-white">Leadership Guidance & Messages</h3>
             <p className="text-xs text-slate-300">
-              Read formal messages from Chairman Shri. Narayandas Agrawal and Director Dr. Rahul Kulkarni.
+              Read formal messages from Chairman Sh. Narayanbhau Agrawal and I/C Director Prof. Piyush S. Agrawal.
             </p>
           </div>
 

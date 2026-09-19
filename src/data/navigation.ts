@@ -16,8 +16,8 @@ export const MAIN_NAVIGATION: NavItem[] = [
     href: "/about",
     children: [
       { label: "About AIM", href: "/about", description: "History, Mission, Vision & Campus" },
-      { label: "Chairman's Message", href: "/about/chairman", description: "Message from Shri. Narayandas Agrawal" },
-      { label: "Director's Message", href: "/about/director", description: "Academic Vision from Dr. Rahul Kulkarni" },
+      { label: "Chairman's Message", href: "/about/chairman", description: "Message from Sh. Narayanbhau Agrawal" },
+      { label: "Director's Message", href: "/about/director", description: "Academic Vision from Prof. Piyush S. Agrawal" },
       { label: "Recognition & Affiliation", href: "/about/recognition", description: "KBCNMU Jalgaon & DTE Approval" }
     ]
   },

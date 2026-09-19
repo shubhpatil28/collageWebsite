@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "http://www.myaimcollege.in";
+  const baseUrl = "https://collage-website-rho.vercel.app";
 
   const routes = [
     "",

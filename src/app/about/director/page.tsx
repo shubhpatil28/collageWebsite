@@ -5,8 +5,8 @@ import Link from "next/link";
 import { Quote, User, CheckCircle2, ArrowRight, GraduationCap } from "lucide-react";
 
 export const metadata = {
-  title: "Director's Message - Dr. Rahul Kulkarni",
-  description: "Academic message from Director Dr. Rahul Kulkarni at Smt. S. M. Agrawal Institute of Management (AIM), Chalisgaon."
+  title: "Director's Message - Prof. Piyush S. Agrawal",
+  description: "Academic message from I/C Director Prof. Piyush S. Agrawal at Smt. S. M. Agrawal Institute of Management (AIM), Chalisgaon."
 };
 
 export default function DirectorPage() {
@@ -16,7 +16,7 @@ export default function DirectorPage() {
     <main className="min-h-screen bg-[#FAFAFA]">
       <PageBanner
         title="Director's Message"
-        subtitle="Academic message from Director Dr. Rahul Kulkarni, Head of Academic Directorate at AIM Chalisgaon."
+        subtitle="Academic message from I/C Director Prof. Piyush S. Agrawal, Head of Academic Directorate at AIM Chalisgaon."
         badge="Academic Leadership"
         breadcrumbs={[
           { label: "About", href: "/about" },
@@ -86,9 +86,9 @@ export default function DirectorPage() {
 
           <div className="pt-6 border-t border-slate-100 flex flex-wrap items-center justify-between gap-4 text-xs text-slate-500">
             <div>
-              <strong>Dr. Rahul Kulkarni</strong>
+              <strong>Prof. Piyush S. Agrawal</strong>
               <br />
-              Director, Smt. S. M. Agrawal Institute of Management, Chalisgaon
+              I/C Director, Smt. S. M. Agrawal Institute of Management, Chalisgaon
             </div>
 
             <Link

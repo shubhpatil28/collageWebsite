@@ -274,7 +274,7 @@ export default function AdmissionsEnquiryForm() {
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder="student@example.com"
+                  placeholder="student@gmail.com"
                   disabled={status === "submitting"}
                   className={`w-full px-4 py-3 rounded-xl border text-sm transition-all focus:outline-none focus:ring-2 ${
                     errors.email

@@ -5,8 +5,8 @@ import Link from "next/link";
 import { Quote, ShieldCheck, CheckCircle2, User, ArrowRight } from "lucide-react";
 
 export const metadata = {
-  title: "Chairman's Message - Shri. Narayandas Agrawal",
-  description: "Read Chairman Shri. Narayandas Agrawal's vision for Smt. S. M. Agrawal Institute of Management (AIM), Chalisgaon."
+  title: "Chairman's Message - Sh. Narayanbhau Agrawal",
+  description: "Read Chairman Sh. Narayanbhau Agrawal's vision for Smt. S. M. Agrawal Institute of Management (AIM), Chalisgaon."
 };
 
 export default function ChairmanPage() {
@@ -16,7 +16,7 @@ export default function ChairmanPage() {
     <main className="min-h-screen bg-[#FAFAFA]">
       <PageBanner
         title="Chairman's Message"
-        subtitle="Address from Shri. Narayandas Agrawal, Founder & Chairman of Smt. Sitabai Mangilal Agrawal Charitable Trust."
+        subtitle="Address from Sh. Narayanbhau Agrawal, Founder & Chairman of Smt. Sitabai Mangilal Agrawal Charitable Trust."
         badge="Trust Leadership"
         breadcrumbs={[
           { label: "About", href: "/about" },
@@ -86,7 +86,7 @@ export default function ChairmanPage() {
 
           <div className="pt-6 border-t border-slate-100 flex flex-wrap items-center justify-between gap-4 text-xs text-slate-500">
             <div>
-              <strong>Shri. Narayandas Agrawal</strong>
+              <strong>Sh. Narayanbhau Agrawal</strong>
               <br />
               Chairman, Smt. Sitabai Mangilal Agrawal Charitable Trust, Chalisgaon
             </div>

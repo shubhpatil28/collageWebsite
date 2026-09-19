@@ -5,6 +5,7 @@ import { SITE_INFO } from "@/data/site-content";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://collage-website-rho.vercel.app"),
   title: {
     default: "Smt. S. M. Agrawal Institute of Management (AIM), Chalisgaon",
     template: "%s | AIM Chalisgaon"
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Smt. S. M. Agrawal Institute of Management (AIM), Chalisgaon",
     description: "Premier academic institution in North Maharashtra offering BCA, BBA & MMS degree programs under KBCNMU Jalgaon.",
-    url: "http://www.myaimcollege.in/",
+    url: "https://collage-website-rho.vercel.app/",
     siteName: "AIM Chalisgaon",
     locale: "en_IN",
     type: "website"

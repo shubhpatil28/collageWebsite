@@ -5,8 +5,8 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/api/"]
+      disallow: ["/api/", "/admin/"]
     },
-    sitemap: "http://www.myaimcollege.in/sitemap.xml"
+    sitemap: "https://collage-website-rho.vercel.app/sitemap.xml"
   };
 }
