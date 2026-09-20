@@ -16,7 +16,9 @@ export default function ContactPage() {
         title="Contact AIM Chalisgaon"
         subtitle="Get in touch with our administrative office, admission helpdesk, or visit our campus in Chalisgaon."
         badge="Contact & Helpdesk"
-        breadcrumbs={[{ label: "Contact", href: "/contact" }]}
+        breadcrumbs={[]}
+        parentHref="/"
+        parentLabel="Home"
       />
 
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16">

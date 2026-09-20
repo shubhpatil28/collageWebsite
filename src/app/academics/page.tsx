@@ -26,7 +26,9 @@ export default function AcademicsPage() {
         title="Academic Programs"
         subtitle="Undergraduate and postgraduate degree programs affiliated with KBCNMU Jalgaon and recognized by DTE Maharashtra."
         badge="Curriculum & Degree Pathways"
-        breadcrumbs={[{ label: "Academics", href: "/academics" }]}
+        breadcrumbs={[]}
+        parentHref="/"
+        parentLabel="Home"
       />
 
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16">

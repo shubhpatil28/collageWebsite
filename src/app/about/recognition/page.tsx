@@ -17,8 +17,7 @@ export default function RecognitionPage() {
         subtitle="Official affiliations, university sanctions, and government recognitions governing AIM Chalisgaon."
         badge="Regulatory Compliance"
         breadcrumbs={[
-          { label: "About", href: "/about" },
-          { label: "Recognition", href: "/about/recognition" }
+          { label: "About", href: "/about" }
         ]}
       />
 

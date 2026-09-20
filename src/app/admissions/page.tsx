@@ -27,7 +27,9 @@ export default function AdmissionsPage() {
         title="Admissions AY 2026-27"
         subtitle="Transparent university-affiliated admission process for BCA, BBA, and MMS degree programs at AIM Chalisgaon."
         badge="Join AIM Chalisgaon"
-        breadcrumbs={[{ label: "Admissions", href: "/admissions" }]}
+        breadcrumbs={[]}
+        parentHref="/"
+        parentLabel="Home"
       />
 
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16">

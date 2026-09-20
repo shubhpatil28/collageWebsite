@@ -254,10 +254,10 @@ export default function AdmissionsEnquiryForm() {
                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                 placeholder="e.g. Rahul Suresh Patil"
                 disabled={status === "submitting"}
-                className={`w-full px-4 py-3 rounded-xl border text-sm transition-all focus:outline-none focus:ring-2 ${
+                className={`w-full px-4 py-3 rounded-xl border text-sm font-medium text-slate-900 bg-white placeholder:text-slate-400 caret-slate-900 transition-all focus:outline-none focus:ring-2 ${
                   errors.fullName
-                    ? "border-rose-400 bg-rose-50/30 focus:ring-rose-400"
-                    : "border-slate-300 focus:border-amber-500 focus:ring-amber-500/20"
+                    ? "border-rose-400 bg-rose-50/40 text-slate-900 focus:ring-rose-400"
+                    : "border-slate-300 focus:border-amber-500 focus:ring-amber-500/20 text-slate-900 bg-white"
                 }`}
               />
               {errors.fullName && (
@@ -282,10 +282,10 @@ export default function AdmissionsEnquiryForm() {
                   onChange={(e) => setFormData({ ...formData, mobile: e.target.value.replace(/\D/g, "") })}
                   placeholder="10-digit mobile number"
                   disabled={status === "submitting"}
-                  className={`w-full px-4 py-3 rounded-xl border text-sm transition-all focus:outline-none focus:ring-2 ${
+                  className={`w-full px-4 py-3 rounded-xl border text-sm font-medium text-slate-900 bg-white placeholder:text-slate-400 caret-slate-900 transition-all focus:outline-none focus:ring-2 ${
                     errors.mobile
-                      ? "border-rose-400 bg-rose-50/30 focus:ring-rose-400"
-                      : "border-slate-300 focus:border-amber-500 focus:ring-amber-500/20"
+                      ? "border-rose-400 bg-rose-50/40 text-slate-900 focus:ring-rose-400"
+                      : "border-slate-300 focus:border-amber-500 focus:ring-amber-500/20 text-slate-900 bg-white"
                   }`}
                 />
                 {errors.mobile && (
@@ -307,10 +307,10 @@ export default function AdmissionsEnquiryForm() {
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="student@gmail.com"
                   disabled={status === "submitting"}
-                  className={`w-full px-4 py-3 rounded-xl border text-sm transition-all focus:outline-none focus:ring-2 ${
+                  className={`w-full px-4 py-3 rounded-xl border text-sm font-medium text-slate-900 bg-white placeholder:text-slate-400 caret-slate-900 transition-all focus:outline-none focus:ring-2 ${
                     errors.email
-                      ? "border-rose-400 bg-rose-50/30 focus:ring-rose-400"
-                      : "border-slate-300 focus:border-amber-500 focus:ring-amber-500/20"
+                      ? "border-rose-400 bg-rose-50/40 text-slate-900 focus:ring-rose-400"
+                      : "border-slate-300 focus:border-amber-500 focus:ring-amber-500/20 text-slate-900 bg-white"
                   }`}
                 />
                 {errors.email && (
@@ -331,14 +331,14 @@ export default function AdmissionsEnquiryForm() {
                 value={formData.program}
                 onChange={(e) => setFormData({ ...formData, program: e.target.value })}
                 disabled={status === "submitting"}
-                className="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none bg-white"
+                className="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm font-medium text-slate-900 bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none"
               >
                 {PROGRAMS.map((p) => (
-                  <option key={p.id} value={p.code}>
+                  <option key={p.id} value={p.code} className="text-slate-900 bg-white font-medium">
                     {p.code} - {p.name} ({p.degree})
                   </option>
                 ))}
-                <option value="General Enquiry">General Admission Query</option>
+                <option value="General Enquiry" className="text-slate-900 bg-white font-medium">General Admission Query</option>
               </select>
             </div>
 
@@ -354,7 +354,7 @@ export default function AdmissionsEnquiryForm() {
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 placeholder="Ask about syllabus, eligibility, MahaDBT scholarship, or hostel facilities..."
                 disabled={status === "submitting"}
-                className="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none"
+                className="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm font-medium text-slate-900 bg-white placeholder:text-slate-400 caret-slate-900 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none"
               />
             </div>
 

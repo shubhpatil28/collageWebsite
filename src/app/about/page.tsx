@@ -26,7 +26,9 @@ export default function AboutPage() {
         title="About AIM Chalisgaon"
         subtitle="Dedicated to fostering academic excellence, technical mastery, and professional management leadership in North Maharashtra."
         badge="Institutional Profile"
-        breadcrumbs={[{ label: "About", href: "/about" }]}
+        breadcrumbs={[]}
+        parentHref="/"
+        parentLabel="Home"
       />
 
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16">

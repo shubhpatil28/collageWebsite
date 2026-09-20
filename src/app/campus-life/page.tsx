@@ -28,7 +28,9 @@ export default function CampusLifePage() {
         title="Campus Infrastructure & Facilities"
         subtitle="Modern academic infrastructure, computer laboratories, central library, and student development facilities at AIM Chalisgaon."
         badge="Campus Facilities"
-        breadcrumbs={[{ label: "Campus Life", href: "/campus-life" }]}
+        breadcrumbs={[]}
+        parentHref="/"
+        parentLabel="Home"
       />
 
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16">

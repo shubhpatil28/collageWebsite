@@ -28,8 +28,7 @@ export default function BbaProgramPage() {
         subtitle={bba.description}
         badge={bba.degree}
         breadcrumbs={[
-          { label: "Academics", href: "/academics" },
-          { label: "BBA", href: "/academics/bba" }
+          { label: "Academics", href: "/academics" }
         ]}
       />
 

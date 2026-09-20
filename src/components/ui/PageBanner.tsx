@@ -10,24 +10,44 @@ interface PageBannerProps {
   subtitle?: string;
   badge?: string;
   breadcrumbs?: { label: string; href: string }[];
+  parentHref?: string;
+  parentLabel?: string;
 }
 
 export default function PageBanner({
   title,
   subtitle,
   badge,
-  breadcrumbs = []
+  breadcrumbs = [],
+  parentHref,
+  parentLabel,
 }: PageBannerProps) {
   const router = useRouter();
 
-  // Determine fallback parent path if history is empty
-  const parentHref = breadcrumbs.length > 0 ? breadcrumbs[breadcrumbs.length - 1].href : "/";
+  // Resolve logical parent path & label
+  const resolvedParentHref =
+    parentHref ||
+    (breadcrumbs.length > 0 ? breadcrumbs[breadcrumbs.length - 1].href : "/");
+
+  const deriveLabelFromHref = (href: string) => {
+    if (href === "/") return "Home";
+    if (href.startsWith("/about")) return "About";
+    if (href.startsWith("/academics")) return "Academics";
+    if (href.startsWith("/resources")) return "Resources";
+    return "Previous";
+  };
+
+  const resolvedParentLabel =
+    parentLabel ||
+    (breadcrumbs.length > 0
+      ? breadcrumbs[breadcrumbs.length - 1].label
+      : deriveLabelFromHref(resolvedParentHref));
 
   const handleBack = () => {
     if (typeof window !== "undefined" && window.history.length > 1) {
       router.back();
     } else {
-      router.push(parentHref);
+      router.push(resolvedParentHref);
     }
   };
 
@@ -60,10 +80,10 @@ export default function PageBanner({
           <button
             onClick={handleBack}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-xs font-bold text-slate-200 hover:text-white border border-slate-700 transition-colors shrink-0 shadow-sm"
-            aria-label="Go Back to Previous Page"
+            aria-label={`Go Back to ${resolvedParentLabel}`}
           >
             <ArrowLeft className="w-3.5 h-3.5 text-amber-400" />
-            <span>Back</span>
+            <span>Back to {resolvedParentLabel}</span>
           </button>
         </div>
 
@@ -88,3 +108,4 @@ export default function PageBanner({
     </div>
   );
 }
+

@@ -19,8 +19,7 @@ export default function DirectorPage() {
         subtitle="Academic message from I/C Director Prof. Piyush S. Agrawal, Head of Academic Directorate at AIM Chalisgaon."
         badge="Academic Leadership"
         breadcrumbs={[
-          { label: "About", href: "/about" },
-          { label: "Director", href: "/about/director" }
+          { label: "About", href: "/about" }
         ]}
       />
 

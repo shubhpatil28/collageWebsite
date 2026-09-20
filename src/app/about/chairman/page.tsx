@@ -19,8 +19,7 @@ export default function ChairmanPage() {
         subtitle="Address from Sh. Narayanbhau Agrawal, Founder & Chairman of Smt. Sitabai Mangilal Agrawal Charitable Trust."
         badge="Trust Leadership"
         breadcrumbs={[
-          { label: "About", href: "/about" },
-          { label: "Chairman", href: "/about/chairman" }
+          { label: "About", href: "/about" }
         ]}
       />
 

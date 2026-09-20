@@ -15,7 +15,9 @@ export default function AlumniPage() {
         title="Alumni Network & Community"
         subtitle="Connecting AIM Chalisgaon graduates across IT industries, corporate enterprises, and entrepreneurial ventures."
         badge="AIM Community"
-        breadcrumbs={[{ label: "Alumni", href: "/alumni" }]}
+        breadcrumbs={[]}
+        parentHref="/"
+        parentLabel="Home"
       />
 
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto space-y-12">

@@ -28,8 +28,7 @@ export default function MmsProgramPage() {
         subtitle={mms.description}
         badge={mms.degree}
         breadcrumbs={[
-          { label: "Academics", href: "/academics" },
-          { label: "MMS", href: "/academics/mms" }
+          { label: "Academics", href: "/academics" }
         ]}
       />
 

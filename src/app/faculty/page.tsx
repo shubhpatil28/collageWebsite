@@ -21,7 +21,9 @@ export default function FacultyPage() {
         title="Faculty & Leadership Directory"
         subtitle="Meet the experienced professors, department heads, and instructors at AIM Chalisgaon."
         badge="Academic Staff"
-        breadcrumbs={[{ label: "Faculty", href: "/faculty" }]}
+        breadcrumbs={[]}
+        parentHref="/"
+        parentLabel="Home"
       />
 
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12">

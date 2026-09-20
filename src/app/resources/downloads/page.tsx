@@ -15,10 +15,9 @@ export default function DownloadsPage() {
         title="Downloads & Document Repository"
         subtitle="Download official university syllabus PDFs, prospectus brochures, and student application forms."
         badge="Resource Center"
-        breadcrumbs={[
-          { label: "Resources", href: "/resources/notices" },
-          { label: "Downloads", href: "/resources/downloads" }
-        ]}
+        breadcrumbs={[]}
+        parentHref="/"
+        parentLabel="Home"
       />
 
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto space-y-8">

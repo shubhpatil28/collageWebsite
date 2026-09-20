@@ -29,8 +29,7 @@ export default function BcaProgramPage() {
         subtitle={bca.description}
         badge={bca.degree}
         breadcrumbs={[
-          { label: "Academics", href: "/academics" },
-          { label: "BCA", href: "/academics/bca" }
+          { label: "Academics", href: "/academics" }
         ]}
       />
 

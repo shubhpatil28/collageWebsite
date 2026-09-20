@@ -15,10 +15,9 @@ export default function NoticesPage() {
         title="Official Notices & Circulars"
         subtitle="Stay updated with university semester exam notifications, admission alerts, and academic announcements."
         badge="Resource Center"
-        breadcrumbs={[
-          { label: "Resources", href: "/resources/notices" },
-          { label: "Notices", href: "/resources/notices" }
-        ]}
+        breadcrumbs={[]}
+        parentHref="/"
+        parentLabel="Home"
       />
 
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto space-y-8">
