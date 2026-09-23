@@ -3,12 +3,13 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { auth, db, isFirebaseConfigured } from "@/lib/firebase";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { checkAdminAuthorization, adminSignOut, AdminUser } from "@/lib/adminAuth";
 import {
   collection,
-  getDocs,
+  onSnapshot,
   doc,
   updateDoc,
   deleteDoc,
@@ -34,10 +35,12 @@ import {
   XCircle,
   AlertCircle,
   Loader2,
-  ChevronRight,
-  Sparkles,
   Building2,
   X,
+  Bell,
+  Send,
+  ShieldCheck,
+  Sparkles,
 } from "lucide-react";
 
 export interface EnquiryRecord {
@@ -52,6 +55,17 @@ export interface EnquiryRecord {
   userAgent?: string;
   createdAt?: Timestamp | { seconds: number; nanoseconds: number } | null;
   updatedAt?: Timestamp | { seconds: number; nanoseconds: number } | null;
+  notificationStatus?: "pending" | "sent" | "partial" | "failed";
+  emailNotification?: {
+    status: "pending" | "sent" | "failed" | "pending_configuration";
+    sentAt?: Timestamp | { seconds: number; nanoseconds: number } | null;
+    error?: string | null;
+  };
+  whatsappNotification?: {
+    status: "pending" | "sent" | "failed" | "pending_configuration";
+    sentAt?: Timestamp | { seconds: number; nanoseconds: number } | null;
+    error?: string | null;
+  };
 }
 
 export default function AdminDashboardPage() {
@@ -64,6 +78,9 @@ export default function AdminDashboardPage() {
   const [dataLoading, setDataLoading] = useState(true);
   const [dataError, setDataError] = useState("");
 
+  // Real-time toast alert state
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
   // Filters & Search
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -73,6 +90,7 @@ export default function AdminDashboardPage() {
   const [selectedEnquiry, setSelectedEnquiry] = useState<EnquiryRecord | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<EnquiryRecord | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
+  const [retryLoading, setRetryLoading] = useState(false);
 
   // Check auth & admin authorization
   useEffect(() => {
@@ -91,7 +109,7 @@ export default function AdminDashboardPage() {
         return;
       }
 
-      const { isAuthorized, adminData, error } = await checkAdminAuthorization(user.uid);
+      const { isAuthorized, adminData } = await checkAdminAuthorization(user.uid);
       if (!isAuthorized) {
         await adminSignOut();
         setAuthLoading(false);
@@ -107,57 +125,78 @@ export default function AdminDashboardPage() {
     return () => unsubscribe();
   }, [router]);
 
-  // Fetch enquiries from Firestore
-  const fetchEnquiries = useCallback(async () => {
-    if (!db) {
-      setDataLoading(false);
-      setDataError("Firebase Firestore database is not configured.");
-      return;
-    }
-
-    setDataLoading(true);
-    setDataError("");
-
-    try {
-      const enquiriesRef = collection(db, "admission_enquiries");
-      const q = query(enquiriesRef, orderBy("createdAt", "desc"));
-      const snapshot = await getDocs(q);
-
-      const records: EnquiryRecord[] = snapshot.docs.map((docSnap) => {
-        const data = docSnap.data();
-        return {
-          id: docSnap.id,
-          fullName: data.fullName || "Unnamed Candidate",
-          mobile: data.mobile || "",
-          email: data.email || "",
-          program: data.program || "General Enquiry",
-          message: data.message || "",
-          status: (data.status as EnquiryRecord["status"]) || "new",
-          source: data.source || "website",
-          userAgent: data.userAgent || "",
-          createdAt: data.createdAt || null,
-          updatedAt: data.updatedAt || null,
-        };
-      });
-
-      setEnquiries(records);
-    } catch (err: unknown) {
-      console.error("Error fetching admission enquiries:", err);
-      const msg = err instanceof Error ? err.message : "Failed to load enquiries.";
-      setDataError(msg);
-    } finally {
-      setDataLoading(false);
-    }
-  }, []);
-
+  // Real-time Firestore Listener using onSnapshot
+  // Real-time Firestore Listener using onSnapshot
   useEffect(() => {
-    if (currentUser && adminProfile) {
-      const timer = setTimeout(() => {
-        fetchEnquiries();
-      }, 0);
+    if (!currentUser || !adminProfile || !db) return;
+
+    const enquiriesRef = collection(db, "admission_enquiries");
+    const q = query(enquiriesRef, orderBy("createdAt", "desc"));
+
+    let isInitialLoad = true;
+
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const records: EnquiryRecord[] = snapshot.docs.map((docSnap) => {
+          const data = docSnap.data();
+          return {
+            id: docSnap.id,
+            fullName: data.fullName || "Unnamed Candidate",
+            mobile: data.mobile || "",
+            email: data.email || "",
+            program: data.program || "General Enquiry",
+            message: data.message || "",
+            status: (data.status as EnquiryRecord["status"]) || "new",
+            source: data.source || "website",
+            userAgent: data.userAgent || "",
+            createdAt: data.createdAt || null,
+            updatedAt: data.updatedAt || null,
+            notificationStatus: data.notificationStatus || "pending",
+            emailNotification: data.emailNotification || { status: "pending" },
+            whatsappNotification: data.whatsappNotification || { status: "pending" },
+          };
+        });
+
+        // Trigger toast alert ONLY for documents added AFTER initial load
+        if (!isInitialLoad) {
+          snapshot.docChanges().forEach((change) => {
+            if (change.type === "added") {
+              const newDoc = change.doc.data();
+              const name = newDoc.fullName || "A candidate";
+              setToastMessage(`🔔 New admission enquiry received from ${name}`);
+            }
+          });
+        }
+
+        setEnquiries(records);
+        setDataLoading(false);
+        isInitialLoad = false;
+      },
+      (err: unknown) => {
+        console.error("Error listening to admission enquiries:", err);
+        const msg = err instanceof Error ? err.message : "Failed to load enquiries.";
+        setDataError(msg);
+        setDataLoading(false);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [currentUser, adminProfile]);
+
+  // Auto-dismiss toast alert
+  useEffect(() => {
+    if (toastMessage) {
+      const timer = setTimeout(() => setToastMessage(null), 6000);
       return () => clearTimeout(timer);
     }
-  }, [currentUser, adminProfile, fetchEnquiries]);
+  }, [toastMessage]);
+
+  // Keep activeSelectedEnquiry in sync when real-time updates happen
+  const activeSelectedEnquiry = useMemo(() => {
+    if (!selectedEnquiry) return null;
+    return enquiries.find((e) => e.id === selectedEnquiry.id) || selectedEnquiry;
+  }, [enquiries, selectedEnquiry]);
 
   // Derive Statistics from real data ONLY
   const stats = useMemo(() => {
@@ -173,7 +212,6 @@ export default function AdminDashboardPage() {
   // Filtered enquiries list
   const filteredEnquiries = useMemo(() => {
     return enquiries.filter((item) => {
-      // Search match
       const term = searchTerm.toLowerCase().trim();
       const matchesSearch =
         !term ||
@@ -182,10 +220,7 @@ export default function AdminDashboardPage() {
         item.email.toLowerCase().includes(term) ||
         item.program.toLowerCase().includes(term);
 
-      // Status match
       const matchesStatus = statusFilter === "all" || item.status === statusFilter;
-
-      // Program match
       const matchesProgram = programFilter === "all" || item.program === programFilter;
 
       return matchesSearch && matchesStatus && matchesProgram;
@@ -226,14 +261,6 @@ export default function AdminDashboardPage() {
         status: newStatus,
         updatedAt: Timestamp.now(),
       });
-
-      setEnquiries((prev) =>
-        prev.map((e) => (e.id === id ? { ...e, status: newStatus } : e))
-      );
-
-      if (selectedEnquiry && selectedEnquiry.id === id) {
-        setSelectedEnquiry({ ...selectedEnquiry, status: newStatus });
-      }
     } catch (err) {
       console.error("Failed to update status:", err);
       alert("Failed to update status in Firestore.");
@@ -250,80 +277,177 @@ export default function AdminDashboardPage() {
       const docRef = doc(db, "admission_enquiries", deleteTarget.id);
       await deleteDoc(docRef);
 
-      setEnquiries((prev) => prev.filter((e) => e.id !== deleteTarget.id));
-      if (selectedEnquiry?.id === deleteTarget.id) {
+      if (selectedEnquiry && selectedEnquiry.id === deleteTarget.id) {
         setSelectedEnquiry(null);
       }
       setDeleteTarget(null);
     } catch (err) {
       console.error("Failed to delete enquiry:", err);
-      alert("Failed to delete enquiry from Firestore.");
+      alert("Failed to delete record from Firestore.");
     } finally {
       setActionLoading(false);
     }
   };
 
-  // CSV Export action
-  const exportCSV = () => {
-    if (filteredEnquiries.length === 0) {
-      alert("No enquiry records available to export.");
-      return;
-    }
+  // Notification Retry Action (Calls protected server API route)
+  const handleRetryNotifications = async (enquiryId: string) => {
+    if (!currentUser) return;
+    setRetryLoading(true);
+    try {
+      const idToken = await currentUser.getIdToken();
+      const response = await fetch("/api/admin/notifications/retry", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({ enquiryId }),
+      });
 
-    const headers = ["ID", "Full Name", "Mobile", "Email", "Program", "Status", "Message", "Created Date"];
-    const csvRows = filteredEnquiries.map((e) => [
+      const resData = await response.json();
+      if (!response.ok) {
+        alert(`Retry failed: ${resData.error || "Unknown server error"}`);
+      } else {
+        setToastMessage("⚡ Notification retry process completed.");
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Retry network error.";
+      alert(`Retry error: ${msg}`);
+    } finally {
+      setRetryLoading(false);
+    }
+  };
+
+  // Export CSV
+  const exportCSV = () => {
+    if (filteredEnquiries.length === 0) return;
+    const headers = [
+      "ID",
+      "Full Name",
+      "Mobile",
+      "Email",
+      "Program",
+      "Status",
+      "Message",
+      "Notification Status",
+      "Email Notification",
+      "WhatsApp Notification",
+      "Submitted At",
+      "Source",
+    ];
+
+    const rows = filteredEnquiries.map((e) => [
       `"${e.id}"`,
       `"${e.fullName.replace(/"/g, '""')}"`,
       `"${e.mobile}"`,
       `"${e.email}"`,
       `"${e.program}"`,
-      `"${e.status.toUpperCase()}"`,
+      `"${e.status}"`,
       `"${(e.message || "").replace(/"/g, '""')}"`,
+      `"${e.notificationStatus || "pending"}"`,
+      `"${e.emailNotification?.status || "pending"}"`,
+      `"${e.whatsappNotification?.status || "pending"}"`,
       `"${formatDate(e.createdAt)}"`,
+      `"${e.source || "website"}"`,
     ]);
 
-    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...csvRows.map((r) => r.join(","))].join("\n");
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `AIM_Admission_Enquiries_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute(
+      "download",
+      `AIM_Admission_Enquiries_${new Date().toISOString().slice(0, 10)}.csv`
+    );
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  // Render Status Badge
-  const renderStatusBadge = (st: EnquiryRecord["status"]) => {
-    switch (st) {
+  // Status Badge Renderer
+  const renderStatusBadge = (status: EnquiryRecord["status"]) => {
+    switch (status) {
       case "new":
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300">
-            <Clock className="w-3 h-3 text-amber-600" />
-            New
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm animate-pulse">
+            <Sparkles className="w-3 h-3 text-amber-400" />
+            NEW
           </span>
         );
       case "contacted":
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-800 border border-purple-300">
-            <Phone className="w-3 h-3 text-purple-600" />
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40">
+            <Phone className="w-3 h-3 text-purple-400" />
             Contacted
           </span>
         );
       case "converted":
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
-            <UserCheck className="w-3 h-3 text-emerald-600" />
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+            <UserCheck className="w-3 h-3 text-emerald-400" />
             Converted
           </span>
         );
       case "closed":
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-300">
-            <XCircle className="w-3 h-3 text-slate-500" />
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700">
+            <XCircle className="w-3 h-3 text-slate-400" />
             Closed
           </span>
         );
     }
+  };
+
+  // Notification Status Badge Renderer
+  const renderNotificationBadge = (record: EnquiryRecord) => {
+    const emailSt = record.emailNotification?.status || "pending";
+    const waSt = record.whatsappNotification?.status || "pending";
+
+    if (emailSt === "sent" && waSt === "sent") {
+      return (
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+          <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+          Email & WA Sent
+        </span>
+      );
+    }
+
+    if (emailSt === "sent") {
+      return (
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/30">
+          <Mail className="w-3 h-3 text-blue-400" />
+          Email Sent ({waSt === "failed" ? "WA Failed" : "WA Pending"})
+        </span>
+      );
+    }
+
+    if (waSt === "sent") {
+      return (
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+          <Phone className="w-3 h-3 text-emerald-400" />
+          WhatsApp Sent ({emailSt === "failed" ? "Email Failed" : "Email Pending"})
+        </span>
+      );
+    }
+
+    if (emailSt === "pending_configuration" || waSt === "pending_configuration") {
+      return (
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-300 border border-amber-500/30">
+          <AlertCircle className="w-3 h-3 text-amber-400" />
+          Unconfigured
+        </span>
+      );
+    }
+
+    return (
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-400 border border-slate-700">
+        <Clock className="w-3 h-3 text-slate-400" />
+        Pending
+      </span>
+    );
   };
 
   if (authLoading) {
@@ -338,13 +462,30 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col relative">
+      {/* Toast Alert Banner */}
+      {toastMessage && (
+        <div className="fixed top-4 right-4 z-50 bg-amber-500 text-slate-950 font-bold text-xs px-4 py-3 rounded-xl shadow-2xl border border-amber-300 flex items-center gap-3 animate-bounce">
+          <Bell className="w-4 h-4 text-slate-950" />
+          <span>{toastMessage}</span>
+          <button onClick={() => setToastMessage(null)} className="text-slate-950 hover:text-slate-800 ml-2">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
       {/* Admin Header */}
       <header className="bg-[#0A192F] border-b border-slate-800 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-xl flex items-center justify-center font-bold">
-              <Building2 className="w-5 h-5" />
+            <div className="relative w-10 h-10 bg-white/10 text-amber-400 border border-amber-500/30 rounded-xl flex items-center justify-center font-bold overflow-hidden p-1 shrink-0">
+              <Image
+                src="/images/aim-logo.png"
+                alt="AIM Logo"
+                width={36}
+                height={36}
+                className="object-contain w-full h-full"
+              />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -358,16 +499,6 @@ export default function AdminDashboardPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <button
-              onClick={fetchEnquiries}
-              disabled={dataLoading}
-              title="Refresh Data"
-              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors border border-slate-700 text-xs flex items-center gap-1.5"
-            >
-              <RefreshCw className={`w-4 h-4 ${dataLoading ? "animate-spin" : ""}`} />
-              <span className="hidden sm:inline font-semibold">Refresh</span>
-            </button>
-
             <div className="hidden md:flex items-center gap-2 text-xs text-slate-400 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700/60">
               <Users className="w-3.5 h-3.5 text-amber-400" />
               <span>{currentUser?.email}</span>
@@ -401,12 +532,6 @@ export default function AdminDashboardPage() {
                 </p>
               </div>
             </div>
-            <Link
-              href="/"
-              className="px-3 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition-colors"
-            >
-              Setup Docs
-            </Link>
           </div>
         )}
 
@@ -416,7 +541,7 @@ export default function AdminDashboardPage() {
           <div className="bg-slate-800/80 border border-amber-500/30 rounded-2xl p-5 space-y-2 relative overflow-hidden">
             <div className="flex items-center justify-between text-slate-400 text-xs font-bold uppercase tracking-wider">
               <span>New Enquiries</span>
-              <Clock className="w-4 h-4 text-amber-400" />
+              <Sparkles className="w-4 h-4 text-amber-400" />
             </div>
             <div className="text-3xl font-extrabold text-amber-400">
               {dataLoading ? "..." : stats.new}
@@ -540,9 +665,6 @@ export default function AdminDashboardPage() {
               <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
               <span>{dataError}</span>
             </div>
-            <button onClick={fetchEnquiries} className="text-amber-400 font-bold underline">
-              Retry
-            </button>
           </div>
         )}
 
@@ -550,7 +672,7 @@ export default function AdminDashboardPage() {
         {dataLoading ? (
           <div className="bg-slate-800/40 border border-slate-800 rounded-2xl p-12 text-center space-y-3">
             <Loader2 className="w-8 h-8 animate-spin text-amber-400 mx-auto" />
-            <p className="text-xs text-slate-400 font-medium">Fetching admission enquiries from Firestore...</p>
+            <p className="text-xs text-slate-400 font-medium">Listening for live admission enquiries from Firestore...</p>
           </div>
         ) : filteredEnquiries.length === 0 ? (
           <div className="bg-slate-800/40 border border-slate-800 rounded-2xl p-12 text-center space-y-3">
@@ -587,7 +709,8 @@ export default function AdminDashboardPage() {
                       <th className="py-3.5 px-4">Candidate</th>
                       <th className="py-3.5 px-4">Contact</th>
                       <th className="py-3.5 px-4">Program</th>
-                      <th className="py-3.5 px-4">Status</th>
+                      <th className="py-3.5 px-4">Enquiry Status</th>
+                      <th className="py-3.5 px-4">Notifications</th>
                       <th className="py-3.5 px-4">Date</th>
                       <th className="py-3.5 px-4 text-right">Actions</th>
                     </tr>
@@ -596,7 +719,9 @@ export default function AdminDashboardPage() {
                     {filteredEnquiries.map((e) => (
                       <tr key={e.id} className="hover:bg-slate-700/30 transition-colors group">
                         <td className="py-3.5 px-4">
-                          <div className="font-bold text-white text-sm">{e.fullName}</div>
+                          <div className="font-bold text-white text-sm flex items-center gap-2">
+                            {e.fullName}
+                          </div>
                           {e.message && (
                             <p className="text-[11px] text-slate-400 line-clamp-1 max-w-xs">{e.message}</p>
                           )}
@@ -620,6 +745,7 @@ export default function AdminDashboardPage() {
                           </span>
                         </td>
                         <td className="py-3.5 px-4">{renderStatusBadge(e.status)}</td>
+                        <td className="py-3.5 px-4">{renderNotificationBadge(e)}</td>
                         <td className="py-3.5 px-4 text-slate-400 whitespace-nowrap">{formatDate(e.createdAt)}</td>
                         <td className="py-3.5 px-4 text-right">
                           <div className="flex items-center justify-end gap-2">
@@ -659,6 +785,11 @@ export default function AdminDashboardPage() {
                       <p className="text-xs text-amber-400 font-semibold">{e.program}</p>
                     </div>
                     {renderStatusBadge(e.status)}
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] text-slate-400 font-medium">Notification:</span>
+                    {renderNotificationBadge(e)}
                   </div>
 
                   {e.message && (
@@ -709,16 +840,16 @@ export default function AdminDashboardPage() {
       </main>
 
       {/* Enquiry Detail Modal */}
-      {selectedEnquiry && (
+      {activeSelectedEnquiry && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl space-y-0">
             {/* Modal Header */}
             <div className="bg-[#0A192F] p-5 border-b border-slate-800 flex items-center justify-between">
               <div className="space-y-0.5">
                 <span className="text-[10px] uppercase font-bold text-amber-400 tracking-wider">
-                  Enquiry Reference #{selectedEnquiry.id.slice(0, 8)}
+                  Enquiry Reference #{activeSelectedEnquiry.id.slice(0, 8)}
                 </span>
-                <h3 className="text-lg font-bold text-white">{selectedEnquiry.fullName}</h3>
+                <h3 className="text-lg font-bold text-white">{activeSelectedEnquiry.fullName}</h3>
               </div>
               <button
                 onClick={() => setSelectedEnquiry(null)}
@@ -736,13 +867,13 @@ export default function AdminDashboardPage() {
                   <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">
                     Program Interested
                   </span>
-                  <span className="text-sm font-bold text-amber-400">{selectedEnquiry.program}</span>
+                  <span className="text-sm font-bold text-amber-400">{activeSelectedEnquiry.program}</span>
                 </div>
                 <div>
                   <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1">
                     Current Status
                   </span>
-                  {renderStatusBadge(selectedEnquiry.status)}
+                  {renderStatusBadge(activeSelectedEnquiry.status)}
                 </div>
               </div>
 
@@ -756,9 +887,9 @@ export default function AdminDashboardPage() {
                     <button
                       key={st}
                       disabled={actionLoading}
-                      onClick={() => handleUpdateStatus(selectedEnquiry.id, st)}
+                      onClick={() => handleUpdateStatus(activeSelectedEnquiry.id, st)}
                       className={`py-2 px-2 rounded-xl text-xs font-bold uppercase transition-all border ${
-                        selectedEnquiry.status === st
+                        activeSelectedEnquiry.status === st
                           ? "bg-amber-500 text-slate-950 border-amber-400 shadow-md"
                           : "bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700"
                       }`}
@@ -769,14 +900,86 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
+              {/* Notification Status Detail Card */}
+              <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                    <Bell className="w-3.5 h-3.5 text-amber-400" />
+                    Notification Delivery Status
+                  </span>
+
+                  {/* Retry Button */}
+                  <button
+                    onClick={() => handleRetryNotifications(activeSelectedEnquiry.id)}
+                    disabled={retryLoading}
+                    className="px-2.5 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[11px] font-bold transition-colors flex items-center gap-1 disabled:opacity-50"
+                  >
+                    {retryLoading ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : (
+                      <Send className="w-3 h-3" />
+                    )}
+                    <span>Retry Notifications</span>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 pt-1">
+                  {/* Email Channel */}
+                  <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800 space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-slate-300">Email:</span>
+                      <span className="font-bold">
+                        {activeSelectedEnquiry.emailNotification?.status === "sent" ? (
+                          <span className="text-emerald-400">✓ Sent</span>
+                        ) : activeSelectedEnquiry.emailNotification?.status === "failed" ? (
+                          <span className="text-rose-400">⚠ Failed</span>
+                        ) : activeSelectedEnquiry.emailNotification?.status === "pending_configuration" ? (
+                          <span className="text-amber-400">⚙ Unconfigured</span>
+                        ) : (
+                          <span className="text-slate-400">Pending</span>
+                        )}
+                      </span>
+                    </div>
+                    {activeSelectedEnquiry.emailNotification?.error && (
+                      <p className="text-[10px] text-rose-400 font-mono truncate">
+                        {activeSelectedEnquiry.emailNotification.error}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* WhatsApp Channel */}
+                  <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800 space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-slate-300">WhatsApp:</span>
+                      <span className="font-bold">
+                        {activeSelectedEnquiry.whatsappNotification?.status === "sent" ? (
+                          <span className="text-emerald-400">✓ Sent</span>
+                        ) : activeSelectedEnquiry.whatsappNotification?.status === "failed" ? (
+                          <span className="text-rose-400">⚠ Failed</span>
+                        ) : activeSelectedEnquiry.whatsappNotification?.status === "pending_configuration" ? (
+                          <span className="text-amber-400">⚙ Unconfigured</span>
+                        ) : (
+                          <span className="text-slate-400">Pending</span>
+                        )}
+                      </span>
+                    </div>
+                    {activeSelectedEnquiry.whatsappNotification?.error && (
+                      <p className="text-[10px] text-rose-400 font-mono truncate">
+                        {activeSelectedEnquiry.whatsappNotification.error}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
               {/* Contact Information */}
-              <div className="space-y-3 pt-2">
+              <div className="space-y-3 pt-1">
                 <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                   Contact Channels
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <a
-                    href={`tel:${selectedEnquiry.mobile}`}
+                    href={`tel:${activeSelectedEnquiry.mobile}`}
                     className="p-3 rounded-xl bg-slate-800 border border-slate-700 hover:border-amber-500/50 flex items-center gap-3 group transition-colors"
                   >
                     <div className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center">
@@ -785,13 +988,13 @@ export default function AdminDashboardPage() {
                     <div>
                       <span className="text-[10px] text-slate-400 block font-bold">Mobile Phone</span>
                       <span className="font-mono text-xs font-bold text-white group-hover:text-amber-400">
-                        {selectedEnquiry.mobile}
+                        {activeSelectedEnquiry.mobile}
                       </span>
                     </div>
                   </a>
 
                   <a
-                    href={`mailto:${selectedEnquiry.email}`}
+                    href={`mailto:${activeSelectedEnquiry.email}`}
                     className="p-3 rounded-xl bg-slate-800 border border-slate-700 hover:border-amber-500/50 flex items-center gap-3 group transition-colors"
                   >
                     <div className="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center">
@@ -800,7 +1003,7 @@ export default function AdminDashboardPage() {
                     <div>
                       <span className="text-[10px] text-slate-400 block font-bold">Email Address</span>
                       <span className="text-xs font-semibold text-slate-200 group-hover:text-amber-400 truncate max-w-[140px] block">
-                        {selectedEnquiry.email}
+                        {activeSelectedEnquiry.email}
                       </span>
                     </div>
                   </a>
@@ -808,21 +1011,21 @@ export default function AdminDashboardPage() {
               </div>
 
               {/* Message */}
-              {selectedEnquiry.message && (
-                <div className="space-y-1.5 pt-2">
+              {activeSelectedEnquiry.message && (
+                <div className="space-y-1.5 pt-1">
                   <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                     Candidate Message / Notes
                   </h4>
                   <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 text-slate-200 leading-relaxed">
-                    {selectedEnquiry.message}
+                    {activeSelectedEnquiry.message}
                   </div>
                 </div>
               )}
 
               {/* Metadata */}
               <div className="text-[10px] text-slate-500 space-y-1 border-t border-slate-800 pt-4">
-                <div>Submitted At: {formatDate(selectedEnquiry.createdAt)}</div>
-                <div>Source: {selectedEnquiry.source || "website"}</div>
+                <div>Submitted At: {formatDate(activeSelectedEnquiry.createdAt)}</div>
+                <div>Source: {activeSelectedEnquiry.source || "website"}</div>
               </div>
             </div>
 
@@ -830,7 +1033,7 @@ export default function AdminDashboardPage() {
             <div className="bg-slate-950 p-4 border-t border-slate-800 flex items-center justify-between">
               <button
                 onClick={() => {
-                  setDeleteTarget(selectedEnquiry);
+                  setDeleteTarget(activeSelectedEnquiry);
                 }}
                 className="px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 font-bold text-xs border border-rose-500/30 flex items-center gap-1.5"
               >

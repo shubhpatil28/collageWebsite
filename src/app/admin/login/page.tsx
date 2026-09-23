@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { auth, isFirebaseConfigured } from "@/lib/firebase";
 import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { checkAdminAuthorization, adminSignOut } from "@/lib/adminAuth";
@@ -113,8 +114,15 @@ export default function AdminLoginPage() {
       </div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md space-y-4 text-center">
-        <div className="w-14 h-14 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
-          <Building2 className="w-8 h-8" />
+        <div className="relative w-16 h-16 bg-white/10 border border-amber-500/30 rounded-2xl flex items-center justify-center mx-auto shadow-lg overflow-hidden p-1.5">
+          <Image
+            src="/images/aim-logo.png"
+            alt="AIM Chalisgaon Logo"
+            width={56}
+            height={56}
+            className="object-contain w-full h-full"
+            priority
+          />
         </div>
         <div className="space-y-1">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">

@@ -1,8 +1,8 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { SITE_INFO, PROGRAMS } from "@/data/site-content";
 import {
-  GraduationCap,
   MapPin,
   Phone,
   Mail,
@@ -24,10 +24,14 @@ export default function Footer() {
           {/* Col 1 & 2: About Institute & Affiliations */}
           <div className="lg:col-span-2 space-y-5">
             <Link href="/" className="flex items-center gap-3 group">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 p-0.5 shadow-lg shadow-amber-500/20">
-                <div className="w-full h-full bg-[#0A192F] rounded-[10px] flex items-center justify-center">
-                  <GraduationCap className="w-7 h-7 text-amber-400" />
-                </div>
+              <div className="relative w-12 h-12 rounded-xl bg-white/10 p-1 border border-amber-500/30 group-hover:scale-105 transition-transform flex items-center justify-center overflow-hidden shrink-0 shadow-md">
+                <Image
+                  src="/images/aim-logo.png"
+                  alt="AIM Chalisgaon Official Logo"
+                  width={44}
+                  height={44}
+                  className="object-contain w-full h-full"
+                />
               </div>
               <div>
                 <h3 className="text-xl font-bold text-white tracking-tight">

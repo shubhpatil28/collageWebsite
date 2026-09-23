@@ -58,7 +58,7 @@ export default function AdmissionsPage() {
               </h3>
 
               {[
-                { step: "01", title: "Submit Admission Enquiry", desc: "Fill out the online enquiry form or visit the college office on Ghat Road, Chalisgaon." },
+                { step: "01", title: "Submit Admission Enquiry", desc: "Fill out the online enquiry form or visit the college office on Dhule Road, Chalisgaon." },
                 { step: "02", title: "Document Verification", desc: "Submit original 10th/12th marksheets, TC/LC, caste certificate, and Aadhaar card." },
                 { step: "03", title: "University Form Registration", desc: "Register on KBCNMU Jalgaon portal as per official university admission notification." },
                 { step: "04", title: "Fee Payment & Final Admission", desc: "Confirm seat allotment and pay prescribed university tuition fees." }

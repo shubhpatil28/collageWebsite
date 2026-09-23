@@ -70,7 +70,7 @@ export const SITE_INFO = {
   dcode: "5162",
   affiliation: "Kavayitri Bahinabai Chaudhari North Maharashtra University (KBCNMU), Jalgaon",
   recognition: "Directorate of Technical Education (DTE), Govt. of Maharashtra",
-  address: "Ghat Road, Opp. Market Yard, Chalisgaon - 424101, Dist. Jalgaon, Maharashtra, India",
+  address: "Dhule Road, B.P. Arts, S.M.A. Science, K.K.C. Commerce College Campus, Chalisgaon - 424101, Dist. Jalgaon, Maharashtra, India",
   phoneNumbers: [
     "+91 9890649477", // Director In-Charge Prof. Piyush Agrawal
     "+91 7770081314", // Registrar Mr. Devendra Joshi
@@ -330,7 +330,7 @@ export const NOTICES: Notice[] = [
     title: "Admissions Open AY 2026-27 - BCA, BBA & MMS Programs",
     date: "Academic Session 2026-27",
     category: "Current Admission",
-    description: "Eligible candidates seeking admission to BCA, BBA, and MMS degree programs are invited to submit their admission enquiry at the college office on Ghat Road, Chalisgaon.",
+    description: "Eligible candidates seeking admission to BCA, BBA, and MMS degree programs are invited to submit their admission enquiry at the college office on Dhule Road, Chalisgaon.",
     isImportant: true
   },
   {
@@ -419,6 +419,6 @@ export const FAQS = [
   },
   {
     q: "How can I submit an admission enquiry?",
-    a: "You can submit an online enquiry form through our website or visit the college office on Ghat Road, Opp. Market Yard, Chalisgaon, Jalgaon."
+    a: "You can submit an online enquiry form through our website or visit the college office at Dhule Road, B.P. Arts, S.M.A. Science, K.K.C. Commerce College Campus, Chalisgaon, Dist. Jalgaon, Maharashtra – 424101."
   }
 ];

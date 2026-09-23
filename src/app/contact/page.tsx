@@ -75,7 +75,7 @@ export default function ContactPage() {
                 Find Us in Chalisgaon
               </h2>
               <p className="text-xs sm:text-sm text-slate-600">
-                Conveniently situated opposite Market Yard near Aurangabad Road in Chalisgaon, Dist. Jalgaon, Maharashtra.
+                Conveniently situated on Dhule Road at the B.P. Arts, S.M.A. Science, K.K.C. Commerce College Campus in Chalisgaon, Dist. Jalgaon, Maharashtra – 424101.
               </p>
             </div>
 

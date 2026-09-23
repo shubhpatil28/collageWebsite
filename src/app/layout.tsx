@@ -22,11 +22,24 @@ export const metadata: Metadata = {
     "Computer Application College Maharashtra"
   ],
   authors: [{ name: SITE_INFO.trust }],
+  icons: {
+    icon: "/images/aim-logo.png",
+    shortcut: "/images/aim-logo.png",
+    apple: "/images/aim-logo.png",
+  },
   openGraph: {
     title: "Smt. S. M. Agrawal Institute of Management (AIM), Chalisgaon",
     description: "Premier academic institution in North Maharashtra offering BCA, BBA & MMS degree programs under KBCNMU Jalgaon.",
     url: "https://collage-website-rho.vercel.app/",
     siteName: "AIM Chalisgaon",
+    images: [
+      {
+        url: "/images/aim-logo.png",
+        width: 800,
+        height: 800,
+        alt: "Smt. S. M. Agrawal Institute of Management Logo",
+      }
+    ],
     locale: "en_IN",
     type: "website"
   },

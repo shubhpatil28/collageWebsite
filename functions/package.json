@@ -1,0 +1,23 @@
+{
+  "name": "functions",
+  "description": "Firebase Cloud Functions for AIM Admission Enquiry Notifications",
+  "scripts": {
+    "lint": "eslint index.js",
+    "serve": "firebase serve --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions"
+  },
+  "engines": {
+    "node": "20"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^13.0.0",
+    "firebase-functions": "^6.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0"
+  },
+  "private": true
+}

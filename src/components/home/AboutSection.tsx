@@ -117,7 +117,7 @@ export default function AboutSection() {
                 </div>
                 <h3 className="text-lg font-bold text-slate-900">Modern Infrastructure</h3>
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Equipped computer laboratories, central academic library, AV seminar hall, and campus located conveniently near Market Yard Chalisgaon.
+                  Equipped computer laboratories, central academic library, AV seminar hall, and campus located conveniently on Dhule Road at B.P. Arts, S.M.A. Science, K.K.C. Commerce College Campus, Chalisgaon.
                 </p>
               </div>
 

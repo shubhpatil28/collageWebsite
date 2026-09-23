@@ -81,7 +81,7 @@ export default function AboutPage() {
               <div className="space-y-4 border-t border-slate-800 pt-4 text-xs text-slate-300">
                 <div>
                   <strong className="text-white block text-sm">Location Advantage:</strong>
-                  Ghat Road, Opp. Market Yard, near Aurangabad Road, Chalisgaon - 424101, Dist. Jalgaon.
+                  Dhule Road, B.P. Arts, S.M.A. Science, K.K.C. Commerce College Campus, Chalisgaon - 424101, Dist. Jalgaon.
                 </div>
                 <div>
                   <strong className="text-white block text-sm">DTE Code:</strong>

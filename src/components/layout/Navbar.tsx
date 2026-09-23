@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { MAIN_NAVIGATION } from "@/data/navigation";
 import { SITE_INFO } from "@/data/site-content";
@@ -10,7 +11,6 @@ import {
   Menu,
   X,
   ChevronDown,
-  GraduationCap,
   PhoneCall,
   Mail,
   Clock,
@@ -87,10 +87,15 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           {/* Logo & Institution Branding */}
           <Link href="/" className="flex items-center gap-3 group focus:outline-none">
-            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 p-0.5 shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform">
-              <div className="w-full h-full bg-[#0A192F] rounded-[10px] flex items-center justify-center">
-                <GraduationCap className="w-6 h-6 text-amber-400" />
-              </div>
+            <div className="relative w-12 h-12 rounded-xl bg-white/10 p-1 border border-amber-500/30 group-hover:scale-105 transition-transform flex items-center justify-center overflow-hidden shrink-0 shadow-md">
+              <Image
+                src="/images/aim-logo.png"
+                alt="AIM Chalisgaon Official Logo"
+                width={44}
+                height={44}
+                className="object-contain w-full h-full"
+                priority
+              />
             </div>
             <div className="flex flex-col">
               <span className="text-white font-bold text-lg sm:text-xl tracking-tight leading-none group-hover:text-amber-400 transition-colors">
