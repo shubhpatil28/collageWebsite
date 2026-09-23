@@ -23,9 +23,12 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: SITE_INFO.trust }],
   icons: {
-    icon: "/images/aim-logo.png",
-    shortcut: "/images/aim-logo.png",
-    apple: "/images/aim-logo.png",
+    icon: [
+      { url: "/images/smt_logo.png", type: "image/png" },
+      { url: "/favicon.ico" }
+    ],
+    shortcut: "/images/smt_logo.png",
+    apple: "/images/smt_logo.png",
   },
   openGraph: {
     title: "Smt. S. M. Agrawal Institute of Management (AIM), Chalisgaon",
