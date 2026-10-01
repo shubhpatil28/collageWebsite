@@ -22,13 +22,16 @@ export const metadata: Metadata = {
     "Computer Application College Maharashtra"
   ],
   authors: [{ name: SITE_INFO.trust }],
+  manifest: "/manifest.webmanifest",
   icons: {
     icon: [
       { url: "/images/smt_logo.png", type: "image/png" },
       { url: "/favicon.ico" }
     ],
     shortcut: "/images/smt_logo.png",
-    apple: "/images/smt_logo.png",
+    apple: [
+      { url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }
+    ],
   },
   openGraph: {
     title: "Smt. S. M. Agrawal Institute of Management (AIM), Chalisgaon",
