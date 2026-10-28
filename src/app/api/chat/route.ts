@@ -62,9 +62,9 @@ export async function POST(req: NextRequest) {
     ];
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 25000);
+    const timeout = setTimeout(() => controller.abort(), 45000);
     const res = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + encodeURIComponent(apiKey),
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=" + encodeURIComponent(apiKey),
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -86,6 +86,7 @@ export async function POST(req: NextRequest) {
       });
     }
     if (!res.ok) {
+      console.error("Gemini provider error", res.status);
       return NextResponse.json({ error: "AI service unavailable" }, { status: 502 });
     }
     const data = await res.json();
