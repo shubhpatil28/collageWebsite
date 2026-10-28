@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import Chatbot from "@/components/chatbot/Chatbot";
 import { SITE_INFO } from "@/data/site-content";
 import "./globals.css";
 
@@ -66,6 +67,7 @@ export default function RootLayout({
         <Navbar />
         <div className="flex-1">{children}</div>
         <Footer />
+        <Chatbot />
       </body>
     </html>
   );
