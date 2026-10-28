@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { SYSTEM_PROMPT, VERIFIED_FAQS } from "@/lib/college-knowledge";
 
 const MAX_MESSAGE = 1000;
-const MAX_HISTORY = 6;
+const MAX_HISTORY = 4;
 const RATE_LIMIT = new Map<string, number[]>();
 
 function getClientIp(req: NextRequest): string {
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
     ];
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 45000);
+    const timeout = setTimeout(() => controller.abort(), 20000);
     const res = await fetch(
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=" + encodeURIComponent(apiKey),
       {
@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
           contents,
-          generationConfig: { maxOutputTokens: 512, temperature: 0.4 },
+          generationConfig: { maxOutputTokens: 256, temperature: 0.4 },
         }),
         signal: controller.signal,
       }
