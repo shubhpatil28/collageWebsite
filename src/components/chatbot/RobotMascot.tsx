@@ -15,10 +15,10 @@ function randBlinkDelay() {
 }
 
 // ─── Eye positions (% relative to the robot image square) ────────────────────
-// Image analysis:
-//   Face visor (dark screen): top 16-37%, left 27-73%
-//   Cyan arc-eyes live in upper portion of visor: top 19-28%
-//   Combined eye strip:        top 19%, left 28%, width 42%, height 9%
+// Transparent PNG analysis:
+//   Face visor (dark screen): top 16–37 %, left 27–73 %
+//   Cyan arc-eyes (upper visor): top ~19–28 %
+//   Single blink bar covering both: top 19 %, left 28 %, w 42 %, h 9 %
 const EYE = { top: "20%", left: "28%", width: "42%", height: "9%", bg: "#010f1e" };
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -40,7 +40,7 @@ export default function RobotMascot({ isOpen, onClick }: Props) {
     }, randBlinkDelay());
   };
 
-  // ── Tooltip scheduler ────────────────────────────────────────────────────
+  // ── Tooltip scheduler (first at 7 s, then every 14–22 s) ─────────────────
   const scheduleTooltip = (delay = 7000) => {
     tooltipRef.current = setTimeout(() => {
       if (!isOpen) setShowTooltip(true);
@@ -63,31 +63,31 @@ export default function RobotMascot({ isOpen, onClick }: Props) {
 
   useEffect(() => { if (isOpen) setShowTooltip(false); }, [isOpen]);
 
-  // ── Float animation (disabled if user prefers reduced motion) ───────────
-  const floatAnim       = shouldReduce ? {} : { y: [0, -13, 0], rotate: [-1.8, 1.8, -1.8] };
+  // ── drop-shadow glow — follows transparent PNG silhouette exactly ─────────
+  const glow = hovered
+    ? "drop-shadow(0 0 16px rgba(0,220,255,1.0)) drop-shadow(0 0 36px rgba(0,160,255,0.75)) drop-shadow(0 8px 20px rgba(0,0,0,0.35))"
+    : "drop-shadow(0 0  9px rgba(0,200,255,0.80)) drop-shadow(0 0 22px rgba(0,140,255,0.50)) drop-shadow(0 6px 16px rgba(0,0,0,0.25))";
+
+  // ── Framer Motion float (disabled for prefers-reduced-motion) ─────────────
+  const floatAnim       = shouldReduce ? {} : { y: [0, -14, 0], rotate: [-2, 2, -2] };
   const floatTransition = { duration: 3.6, repeat: Infinity, ease: "easeInOut" as const };
 
-  // ── Stage size: robot displayed at this size ─────────────────────────────
-  // 130 px desktop, fluid down to 100 px on narrow mobile
-  const ROBOT_SIZE = "clamp(100px, 14vw, 130px)";
+  // Robot display size — large enough to read as a character, not an icon
+  const SIZE = "clamp(100px, 14vw, 130px)";
 
   return (
     <>
       <style>{`
         @keyframes rm-halo {
-          0%,100%{ opacity:.50; transform:scaleX(1)   scaleY(1);   }
-          50%    { opacity:.85; transform:scaleX(1.45) scaleY(1.30);}
+          0%,100%{ opacity:.45; transform:scaleX(1)    scaleY(1);   }
+          50%    { opacity:.80; transform:scaleX(1.50) scaleY(1.35);}
         }
         @keyframes rm-ring {
-          0%  { transform:scale(.80); opacity:.70; }
-          100%{ transform:scale(2.40); opacity:0;  }
-        }
-        @keyframes rm-badge-pulse {
-          0%,100%{ box-shadow: 0 0 0 0 rgba(0,200,255,.50); }
-          50%    { box-shadow: 0 0 0 6px rgba(0,200,255,0);  }
+          0%  { transform:scale(.75); opacity:.65; }
+          100%{ transform:scale(2.50); opacity:0;  }
         }
         @media(prefers-reduced-motion:reduce){
-          .rm-halo,.rm-ring,.rm-badge{ animation:none!important; }
+          .rm-halo,.rm-ring{ animation:none!important; }
         }
       `}</style>
 
@@ -95,19 +95,19 @@ export default function RobotMascot({ isOpen, onClick }: Props) {
         {!isOpen && (
           <motion.div
             key="mascot-root"
-            initial={{ opacity: 0, scale: 0.55, y: 40 }}
-            animate={{ opacity: 1, scale: 1,    y: 0  }}
-            exit={{   opacity: 0, scale: 0.55, y: 40  }}
+            initial={{ opacity: 0, scale: 0.5, y: 48 }}
+            animate={{ opacity: 1, scale: 1,   y: 0  }}
+            exit={{   opacity: 0, scale: 0.5, y: 48  }}
             transition={{ type: "spring", stiffness: 260, damping: 22 }}
             style={{
-              position:       "fixed",
-              bottom:         "16px",
-              right:          "16px",
-              zIndex:         50,
-              display:        "flex",
-              flexDirection:  "column",
-              alignItems:     "center",
-              pointerEvents:  "auto",
+              position:      "fixed",
+              bottom:        "16px",
+              right:         "16px",
+              zIndex:        50,
+              display:       "flex",
+              flexDirection: "column",
+              alignItems:    "center",
+              pointerEvents: "auto",
             }}
           >
             {/* ── Speech-bubble tooltip ─────────────────────────────────── */}
@@ -130,12 +130,13 @@ export default function RobotMascot({ isOpen, onClick }: Props) {
                     borderRadius:  "22px",
                     marginBottom:  "10px",
                     whiteSpace:    "nowrap",
-                    boxShadow:     "0 6px 28px rgba(0,0,0,.40), 0 0 0 1px rgba(0,200,255,.30)",
+                    boxShadow:     "0 6px 28px rgba(0,0,0,.42), 0 0 0 1px rgba(0,200,255,.30)",
                     pointerEvents: "none",
                     userSelect:    "none",
                   }}
                 >
                   💬 Ask AIM Assistant
+                  {/* Downward tail */}
                   <span
                     aria-hidden="true"
                     style={{
@@ -143,8 +144,8 @@ export default function RobotMascot({ isOpen, onClick }: Props) {
                       bottom:      "-6px",
                       left:        "50%",
                       transform:   "translateX(-50%)",
-                      width:        0,
-                      height:       0,
+                      width:       0,
+                      height:      0,
                       borderLeft:  "7px solid transparent",
                       borderRight: "7px solid transparent",
                       borderTop:   "7px solid #1b3568",
@@ -154,7 +155,7 @@ export default function RobotMascot({ isOpen, onClick }: Props) {
               )}
             </AnimatePresence>
 
-            {/* ── Robot button ───────────────────────────────────────────── */}
+            {/* ── Free-floating robot button (no container background) ────── */}
             <button
               onClick={onClick}
               onMouseEnter={() => setHovered(true)}
@@ -175,103 +176,68 @@ export default function RobotMascot({ isOpen, onClick }: Props) {
                 touchAction:             "manipulation",
               }}
             >
-              {/* Framer Motion float + rotate wrapper */}
+              {/* Float + rotate (outer) */}
               <motion.div
                 animate={floatAnim}
                 transition={floatTransition}
                 style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
               >
-                {/* Tap-scale wrapper */}
+                {/* Tap-scale (inner) */}
                 <motion.div
                   whileTap={{ scale: 0.88 }}
                   transition={{ type: "spring", stiffness: 380, damping: 22 }}
                   style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
                 >
-                  {/* ── Robot stage: dark oval backdrop + glow ring ───────
-                      The robot PNG has a white background so we place it on
-                      a dark circular stage that:
-                        1. Provides a themed backdrop on BOTH light and dark pages
-                        2. Contains the blue neon glow rings naturally
-                        3. Creates a "floating platform" 3D feel               */}
+                  {/* Robot image wrapper
+                      drop-shadow follows the transparent silhouette exactly,
+                      producing a clean neon halo around the character only.   */}
                   <div
                     style={{
-                      position:     "relative",
-                      width:        ROBOT_SIZE,
-                      height:       ROBOT_SIZE,
-                      borderRadius: "50%",
-                      // Deep navy/midnight background — theme-matches AIM branding
-                      background:   "radial-gradient(circle at 38% 38%, #0e2252 0%, #060d1f 100%)",
-                      // Blue neon glow that follows the circular stage
-                      boxShadow:    hovered
-                        ? "0 0 0 2px rgba(0,200,255,.75), 0 0 28px 8px rgba(0,200,255,.70), 0 0 60px 18px rgba(0,130,255,.40)"
-                        : "0 0 0 2px rgba(0,190,255,.45), 0 0 18px 5px rgba(0,190,255,.50), 0 0 44px 12px rgba(0,120,255,.28)",
-                      transition:   "box-shadow 0.35s ease",
-                      overflow:     "hidden",  // clip robot to circle boundary
+                      position:   "relative",
+                      width:      SIZE,
+                      height:     SIZE,
+                      filter:     glow,
+                      transition: "filter 0.35s ease",
                     }}
                   >
-                    {/* Robot image — sized slightly larger than stage so it
-                        overflows the circle naturally (head + antenna peeks out).
-                        overflow:visible on the parent stage + overflow:hidden
-                        gives the right crop.
-                        We use a wrapper with overflow:visible to let the robot
-                        visually overflow the circle at top. */}
-                    <div
-                      style={{
-                        position: "absolute",
-                        // Robot overflows stage by ~15% at top so head is visible,
-                        // and robot is centered in the stage
-                        top:      "-14%",
-                        left:     "0%",
-                        width:    "100%",
-                        height:   "114%",
-                        overflow: "visible",
-                      }}
-                    >
-                      <Image
-                        src="/images/aim-chatbot-robot.png"
-                        alt="AIM College Assistant robot mascot"
-                        fill
-                        sizes={`(max-width:480px) 100px, 130px`}
-                        style={{
-                          objectFit:     "contain",
-                          pointerEvents: "none",
-                        }}
-                        priority
-                      />
+                    <Image
+                      src="/images/aim-chatbot-robot.png"
+                      alt="AIM College Assistant robot mascot"
+                      fill
+                      sizes="(max-width:480px) 100px, 130px"
+                      style={{ objectFit: "contain", pointerEvents: "none" }}
+                      priority
+                    />
 
-                      {/* ── Eye-blink overlay ────────────────────────────
-                          Dark bar matching the face visor colour, covers
-                          the two cyan arc-eyes when blinking.
-                          Coordinates verified against the robot image:
-                            top  : 20 % from image top
-                            left : 28 %
-                            width: 42 %
-                            height: 9 %                                  */}
-                      {blinking && (
-                        <div
-                          aria-hidden="true"
-                          style={{
-                            position:      "absolute",
-                            top:           EYE.top,
-                            left:          EYE.left,
-                            width:         EYE.width,
-                            height:        EYE.height,
-                            background:    EYE.bg,
-                            borderRadius:  "3px",
-                            pointerEvents: "none",
-                            zIndex:        3,
-                          }}
-                        />
-                      )}
-                    </div>
+                    {/* ── Eye-blink overlay ──────────────────────────────────
+                        Dark bar matching face visor colour (#010f1e).
+                        Covers both cyan arc-eyes during the 155 ms blink.
+                        Coordinates from alpha-channel-verified image analysis:
+                          top 20 %, left 28 %, width 42 %, height 9 %         */}
+                    {blinking && (
+                      <div
+                        aria-hidden="true"
+                        style={{
+                          position:      "absolute",
+                          top:           EYE.top,
+                          left:          EYE.left,
+                          width:         EYE.width,
+                          height:        EYE.height,
+                          background:    EYE.bg,
+                          borderRadius:  "3px",
+                          pointerEvents: "none",
+                          zIndex:        3,
+                        }}
+                      />
+                    )}
                   </div>
 
-                  {/* ── Ambient ground glow / contact shadow ─────────────── */}
+                  {/* ── Ambient ground-glow / contact shadow ───────────────── */}
                   <div
                     className="rm-halo"
                     style={{
-                      width:         "76px",
-                      height:        "14px",
+                      width:         "70px",
+                      height:        "13px",
                       background:    "radial-gradient(ellipse at center, rgba(0,200,255,0.50) 0%, transparent 72%)",
                       borderRadius:  "50%",
                       animation:     "rm-halo 2.8s ease-in-out infinite",
@@ -284,16 +250,15 @@ export default function RobotMascot({ isOpen, onClick }: Props) {
               </motion.div>
             </button>
 
-            {/* ── Radial pulse rings (emanate from stage edge) ─────────── */}
+            {/* ── Pulse rings centred on contact shadow ─────────────────── */}
             <div
               style={{
                 position:      "absolute",
-                // Aligned with the circular stage centre
-                bottom:        "20px",
+                bottom:        "0px",
                 left:          "50%",
                 transform:     "translateX(-50%)",
-                width:         "70px",
-                height:        "70px",
+                width:         "64px",
+                height:        "64px",
                 pointerEvents: "none",
               }}
             >
@@ -305,7 +270,7 @@ export default function RobotMascot({ isOpen, onClick }: Props) {
                     position:     "absolute",
                     inset:        0,
                     borderRadius: "50%",
-                    border:       "2px solid rgba(0,195,255,0.65)",
+                    border:       "2px solid rgba(0,195,255,0.60)",
                     animation:    `rm-ring 2.4s ${delay}s ease-out infinite`,
                   }}
                 />
