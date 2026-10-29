@@ -2,7 +2,9 @@
 
 import { useState, useRef, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { MessageCircle, X, Send, Trash2 } from "lucide-react";
+import { X, Send, Trash2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import RobotMascot from "./RobotMascot";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -15,12 +17,14 @@ const SUGGESTED = [
 ];
 
 function renderText(text: string) {
-  // Safe: escape HTML then convert simple markdown links
   const escaped = text
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
-  const linked = escaped.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="underline text-amber-700">$1</a>');
+  const linked = escaped.replace(
+    /\[([^\]]+)\]\(([^)]+)\)/g,
+    '<a href="$2" class="underline text-amber-700">$1</a>'
+  );
   const bold = linked.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
   return bold.split("\n").map((line, i) => (
     <span key={i}>
@@ -62,8 +66,9 @@ export default function Chatbot() {
       const data = await r.json();
       if (!r.ok) throw new Error(data?.error || "Failed");
       setMsgs([...next, { role: "assistant", content: data.reply }]);
-    } catch (e: any) {
-      setErr(e?.message || "Something went wrong");
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Something went wrong";
+      setErr(msg);
     } finally {
       setLoading(false);
     }
@@ -71,100 +76,284 @@ export default function Chatbot() {
 
   return (
     <>
-      {open && (
-        <div className="fixed bottom-20 right-4 z-50 w-[92vw] max-w-sm rounded-2xl border border-slate-200 bg-white shadow-2xl flex flex-col h-[70vh] max-h-[560px]">
-          <div className="flex items-center justify-between px-4 py-3 bg-[#0F1F3D] text-white rounded-t-2xl">
-            <div>
-              <div className="font-semibold text-sm">AIM College Assistant</div>
-              <div className="text-[11px] text-amber-300">Ask about courses, admissions & more</div>
-            </div>
-            <div className="flex gap-1">
-              <button onClick={() => setMsgs([])} aria-label="Clear conversation" className="p-1.5 hover:bg-white/10 rounded">
-                <Trash2 size={16} />
-              </button>
-              <button onClick={() => setOpen(false)} aria-label="Close chat" className="p-1.5 hover:bg-white/10 rounded">
-                <X size={16} />
-              </button>
-            </div>
-          </div>
-          <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3 text-sm">
-            {msgs.length === 0 && (
-              <div className="space-y-2">
-                <div className="bg-slate-100 rounded-xl px-3 py-2 text-slate-700">
-                  Welcome! I'm the AIM College Assistant. How can I help you today?
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {SUGGESTED.map((q) => (
-                    <button
-                      key={q}
-                      onClick={() => send(q)}
-                      className="text-xs px-3 py-1.5 rounded-full border border-amber-400 text-amber-800 hover:bg-amber-50"
-                    >
-                      {q}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-            {msgs.map((m, i) => (
-              <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
-                <div
-                  className={`max-w-[85%] rounded-xl px-3 py-2 ${
-                    m.role === "user" ? "bg-[#0F1F3D] text-white" : "bg-slate-100 text-slate-800"
-                  }`}
-                >
-                  {renderText(m.content)}
-                </div>
-              </div>
-            ))}
-            {loading && (
-              <div className="flex justify-start">
-                <div className="bg-slate-100 rounded-xl px-3 py-2 text-slate-500 text-xs">Thinking…</div>
-              </div>
-            )}
-            {err && <div className="text-red-600 text-xs px-2">{err}</div>}
-            <div ref={endRef} />
-          </div>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              send(input);
+      {/* ── Chat panel ── */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            key="chat-panel"
+            initial={{ opacity: 0, y: 24, scale: 0.94 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 24, scale: 0.94 }}
+            transition={{ type: "spring", stiffness: 320, damping: 28 }}
+            style={{
+              position: "fixed",
+              bottom: "108px",   /* sits above the 76px mascot + spacing */
+              right: "1rem",
+              zIndex: 50,
+              width: "min(92vw, 370px)",
+              maxHeight: "560px",
+              display: "flex",
+              flexDirection: "column",
+              borderRadius: "1.25rem",
+              boxShadow:
+                "0 16px 60px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,149,255,0.18)",
+              overflow: "hidden",
+              background: "#fff",
             }}
-            className="flex items-center gap-2 border-t border-slate-200 p-2"
+            role="dialog"
+            aria-modal="true"
+            aria-label="AIM College Assistant chat"
           >
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  send(input);
-                }
+            {/* Header */}
+            <div
+              style={{
+                background: "linear-gradient(135deg,#0F1F3D 0%,#152d5b 100%)",
+                color: "#fff",
+                padding: "0.65rem 1rem",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                borderBottom: "1px solid rgba(0,149,255,0.25)",
               }}
-              placeholder="Type your question…"
-              aria-label="Chat message"
-              className="flex-1 px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400"
-              disabled={loading}
-              maxLength={1000}
-            />
-            <button
-              type="submit"
-              disabled={loading || !input.trim()}
-              aria-label="Send message"
-              className="p-2 rounded-lg bg-amber-500 text-slate-900 disabled:opacity-50"
             >
-              <Send size={16} />
-            </button>
-          </form>
-        </div>
-      )}
-      <button
-        onClick={() => setOpen((o) => !o)}
-        aria-label="Open AIM College Assistant"
-        className="fixed bottom-4 right-4 z-50 w-14 h-14 rounded-full bg-[#0F1F3D] text-white shadow-xl flex items-center justify-center hover:bg-[#1a2f5a]"
-      >
-        <MessageCircle size={26} />
-      </button>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+                {/* Small robot avatar in header */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/images/aim-chatbot-robot.png"
+                  alt=""
+                  aria-hidden="true"
+                  width={36}
+                  height={36}
+                  style={{ objectFit: "contain", flexShrink: 0 }}
+                />
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: "0.875rem" }}>
+                    AIM College Assistant
+                  </div>
+                  <div style={{ fontSize: "0.7rem", color: "#fbbf24", marginTop: "1px" }}>
+                    Ask about courses, admissions &amp; more
+                  </div>
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: "4px" }}>
+                <button
+                  onClick={() => setMsgs([])}
+                  aria-label="Clear conversation"
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    color: "#fff",
+                    cursor: "pointer",
+                    padding: "6px",
+                    borderRadius: "6px",
+                    lineHeight: 1,
+                    display: "flex",
+                  }}
+                  onMouseOver={(e) =>
+                    (e.currentTarget.style.background = "rgba(255,255,255,0.12)")
+                  }
+                  onMouseOut={(e) =>
+                    (e.currentTarget.style.background = "transparent")
+                  }
+                >
+                  <Trash2 size={15} />
+                </button>
+                <button
+                  onClick={() => setOpen(false)}
+                  aria-label="Close chat"
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    color: "#fff",
+                    cursor: "pointer",
+                    padding: "6px",
+                    borderRadius: "6px",
+                    lineHeight: 1,
+                    display: "flex",
+                  }}
+                  onMouseOver={(e) =>
+                    (e.currentTarget.style.background = "rgba(255,255,255,0.12)")
+                  }
+                  onMouseOut={(e) =>
+                    (e.currentTarget.style.background = "transparent")
+                  }
+                >
+                  <X size={15} />
+                </button>
+              </div>
+            </div>
+
+            {/* Messages */}
+            <div
+              style={{
+                flex: 1,
+                overflowY: "auto",
+                padding: "0.75rem",
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.75rem",
+                fontSize: "0.875rem",
+              }}
+            >
+              {msgs.length === 0 && (
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                  <div
+                    style={{
+                      background: "#f1f5f9",
+                      borderRadius: "0.75rem",
+                      padding: "0.6rem 0.8rem",
+                      color: "#374151",
+                    }}
+                  >
+                    Welcome! I&apos;m the AIM College Assistant. How can I help you
+                    today?
+                  </div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
+                    {SUGGESTED.map((q) => (
+                      <button
+                        key={q}
+                        onClick={() => send(q)}
+                        style={{
+                          fontSize: "0.72rem",
+                          padding: "0.3rem 0.75rem",
+                          borderRadius: "9999px",
+                          border: "1px solid #f59e0b",
+                          color: "#92400e",
+                          background: "transparent",
+                          cursor: "pointer",
+                          transition: "background 0.15s",
+                        }}
+                        onMouseOver={(e) =>
+                          (e.currentTarget.style.background = "#fffbeb")
+                        }
+                        onMouseOut={(e) =>
+                          (e.currentTarget.style.background = "transparent")
+                        }
+                      >
+                        {q}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {msgs.map((m, i) => (
+                <div
+                  key={i}
+                  style={{
+                    display: "flex",
+                    justifyContent:
+                      m.role === "user" ? "flex-end" : "flex-start",
+                  }}
+                >
+                  <div
+                    style={{
+                      maxWidth: "85%",
+                      borderRadius: "0.75rem",
+                      padding: "0.5rem 0.75rem",
+                      background:
+                        m.role === "user" ? "#0F1F3D" : "#f1f5f9",
+                      color: m.role === "user" ? "#fff" : "#1e293b",
+                    }}
+                  >
+                    {renderText(m.content)}
+                  </div>
+                </div>
+              ))}
+
+              {loading && (
+                <div style={{ display: "flex", justifyContent: "flex-start" }}>
+                  <div
+                    style={{
+                      background: "#f1f5f9",
+                      borderRadius: "0.75rem",
+                      padding: "0.5rem 0.75rem",
+                      color: "#64748b",
+                      fontSize: "0.75rem",
+                    }}
+                  >
+                    Thinking…
+                  </div>
+                </div>
+              )}
+
+              {err && (
+                <div style={{ color: "#dc2626", fontSize: "0.75rem", padding: "0 0.5rem" }}>
+                  {err}
+                </div>
+              )}
+              <div ref={endRef} />
+            </div>
+
+            {/* Input */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                send(input);
+              }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                borderTop: "1px solid #e2e8f0",
+                padding: "0.5rem",
+              }}
+            >
+              <input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    send(input);
+                  }
+                }}
+                placeholder="Type your question…"
+                aria-label="Chat message"
+                style={{
+                  flex: 1,
+                  padding: "0.5rem 0.75rem",
+                  fontSize: "0.875rem",
+                  border: "1px solid #cbd5e1",
+                  borderRadius: "0.5rem",
+                  outline: "none",
+                }}
+                disabled={loading}
+                maxLength={1000}
+                onFocus={(e) =>
+                  (e.currentTarget.style.boxShadow =
+                    "0 0 0 2px rgba(245,158,11,0.5)")
+                }
+                onBlur={(e) =>
+                  (e.currentTarget.style.boxShadow = "none")
+                }
+              />
+              <button
+                type="submit"
+                disabled={loading || !input.trim()}
+                aria-label="Send message"
+                style={{
+                  padding: "0.5rem",
+                  borderRadius: "0.5rem",
+                  background: "#f59e0b",
+                  color: "#1c1917",
+                  border: "none",
+                  cursor: loading || !input.trim() ? "not-allowed" : "pointer",
+                  opacity: loading || !input.trim() ? 0.5 : 1,
+                  display: "flex",
+                  lineHeight: 1,
+                }}
+              >
+                <Send size={16} />
+              </button>
+            </form>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Robot mascot launcher ── */}
+      <RobotMascot isOpen={open} onClick={() => setOpen((o) => !o)} />
     </>
   );
 }
