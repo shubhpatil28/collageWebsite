@@ -87,7 +87,7 @@ export default function Chatbot() {
             transition={{ type: "spring", stiffness: 320, damping: 28 }}
             style={{
               position: "fixed",
-              bottom: "108px",   /* sits above the 76px mascot + spacing */
+              bottom: "20px",   /* mascot hides when chat is open, no overlap */
               right: "1rem",
               zIndex: 50,
               width: "min(92vw, 370px)",
