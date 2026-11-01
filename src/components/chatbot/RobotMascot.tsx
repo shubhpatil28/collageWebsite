@@ -214,6 +214,7 @@ function MascotInner({ isOpen, onClick }: Props) {
   const [showTooltip, setShowTooltip] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [mobileVisible, setMobileVisible] = useState(true);
+  const [formVisible, setFormVisible] = useState(false);
   const blinkRef   = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tooltipRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -314,6 +315,19 @@ function MascotInner({ isOpen, onClick }: Props) {
     };
   }, []);
 
+  useEffect(() => {
+    const form = document.querySelector("form");
+    if (!form) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        setFormVisible(entries[0]?.isIntersecting ?? false);
+      },
+      { threshold: 0.2 }
+    );
+    observer.observe(form);
+    return () => observer.disconnect();
+  }, []);
+
   /* Cyan glow — brighter on hover; slightly reduced intensity */
   const glowFilter = hovered
     ? "drop-shadow(0 0 14px rgba(0,210,255,0.80)) drop-shadow(0 0 28px rgba(0,150,255,0.45)) drop-shadow(0 3px 10px rgba(0,0,0,0.25))"
@@ -321,7 +335,7 @@ function MascotInner({ isOpen, onClick }: Props) {
 
   return (
     <AnimatePresence>
-      {!isOpen && !(typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches && !mobileVisible) && (
+      {!isOpen && !(typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches && (!mobileVisible || formVisible)) && (
         <motion.div
           key="mascot-root"
           initial={{ opacity: 0, scale: 0.65, y: 30 }}
