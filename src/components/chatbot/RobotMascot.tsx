@@ -255,10 +255,10 @@ function MascotInner({ isOpen, onClick }: Props) {
 
   useEffect(() => { if (isOpen) setShowTooltip(false); }, [isOpen]);
 
-  /* Cyan glow — brighter on hover */
+  /* Cyan glow — brighter on hover; slightly reduced intensity */
   const glowFilter = hovered
-    ? "drop-shadow(0 0 18px rgba(0,210,255,0.95)) drop-shadow(0 0 36px rgba(0,150,255,0.55)) drop-shadow(0 4px 14px rgba(0,0,0,0.28))"
-    : "drop-shadow(0 0 10px rgba(0,200,255,0.7)) drop-shadow(0 0 22px rgba(0,120,255,0.35)) drop-shadow(0 3px 10px rgba(0,0,0,0.2))";
+    ? "drop-shadow(0 0 14px rgba(0,210,255,0.80)) drop-shadow(0 0 28px rgba(0,150,255,0.45)) drop-shadow(0 3px 10px rgba(0,0,0,0.25))"
+    : "drop-shadow(0 0 8px rgba(0,200,255,0.55)) drop-shadow(0 0 18px rgba(0,120,255,0.28)) drop-shadow(0 2px 8px rgba(0,0,0,0.18))";
 
   return (
     <AnimatePresence>
@@ -312,7 +312,7 @@ function MascotInner({ isOpen, onClick }: Props) {
           {/* Floating animation wrapper */}
           <motion.div
             animate={shouldReduce ? undefined : {
-              y: [0, -8, -2, -10, 0, -5, 0],
+              y: [0, -6, -1, -8, 0, -4, 0],
             }}
             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
           >
@@ -331,8 +331,8 @@ function MascotInner({ isOpen, onClick }: Props) {
                 outline: "none",
                 WebkitTapHighlightColor: "transparent",
                 touchAction: "manipulation",
-                /* Compact head size — clamp between 80px (mobile) and 110px (desktop) */
-                width: "clamp(80px, 14vw, 110px)",
+                /* Head size ~17.5% smaller than original; min 66px keeps tap target ≥48px */
+                width: "clamp(66px, 11.5vw, 91px)",
                 display: "block",
                 filter: glowFilter,
                 transition: "filter 0.3s ease",
