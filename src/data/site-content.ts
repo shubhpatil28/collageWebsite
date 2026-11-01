@@ -72,7 +72,7 @@ export const SITE_INFO = {
   recognition: "Directorate of Technical Education (DTE), Govt. of Maharashtra",
   address: "Dhule Road, B.P. Arts, S.M.A. Science, K.K.C. Commerce College Campus, Chalisgaon - 424101, Dist. Jalgaon, Maharashtra, India",
   phoneNumbers: [
-    "+91 9890649477", // Director In-Charge Prof. Piyush Agrawal
+    "+91 9970299902", // Director I/C Dr. Shrikant S. Bhandari
     "+91 7770081314", // Registrar Mr. Devendra Joshi
     "02589-222477"    // Office Line
   ],
@@ -80,7 +80,7 @@ export const SITE_INFO = {
     "admissions2020.ssmaim@gmail.com",
     "aim.office@rediffmail.com"
   ],
-  workingHours: "Monday – Saturday: 9:30 AM to 5:30 PM",
+  workingHours: "Monday – Saturday: 11:00 AM to 4:00 PM",
   mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3737.893116565147!2d75.0069!3d20.4632!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjDCsDI3JzQ3LjUiTiA3NcKwMDAnMjQuOCJF!5e0!3m2!1sen!2sin!4v1620000000000!5m2!1sen!2sin"
 };
 
@@ -102,8 +102,8 @@ export const LEADERSHIP: {
     ]
   },
   director: {
-    name: "Prof. Piyush S. Agrawal",
-    role: "I/C Director & Academic Directorate",
+    name: "Dr. Shrikant S. Bhandari",
+    role: "Director I/C",
     quote: "Blending technical application mastery with modern business administration skills.",
     message: "At AIM Chalisgaon, our focus is on ensuring every BCA, BBA, and MMS student gains strong theoretical clarity and practical application experience under KBCNMU guidelines. We mentor students through regular computer lab sessions, academic seminars, and career guidance.",
     visionPoints: [
@@ -120,7 +120,7 @@ export const LEADERSHIP: {
     { name: "Sh. Yogesh Agrawal", role: "Jt. Secretary" },
     { name: "Prof. M. V. Bildikar", role: "Founder Director" },
     { name: "Prof. Dr. A. B. Deogirkar", role: "Ex-Director" },
-    { name: "Dr. Mandar Kulkarni", role: "Director (On Lien)" }
+    { name: "Dr. Rahul Kulkarni", role: "Ex-Director" }
   ]
 };
 
@@ -225,36 +225,36 @@ export const PROGRAMS: Course[] = [
 export const FACULTY_LIST: FacultyMember[] = [
   {
     id: "fac-1",
-    name: "Prof. Piyush S. Agrawal",
-    designation: "I/C Director & Assistant Professor",
-    qualification: "MBM, Ph.D. Scholar",
-    department: "Management Studies",
-    specialization: "Business Administration & Management Information Systems",
-    experience: "15+ Years Academic & Administrative Experience"
-  },
-  {
-    id: "fac-2",
-    name: "Dr. Mandar Kulkarni",
-    designation: "Director (On Lien) & Associate Professor",
-    qualification: "Ph.D., FIETE",
-    department: "Computer Applications",
-    specialization: "Computer Science & Communication Systems",
-    experience: "18+ Years Higher Education Experience"
-  },
-  {
-    id: "fac-3",
     name: "Dr. Shrikant S. Bhandari",
-    designation: "Associate Professor",
-    qualification: "Ph.D., M.Com, MBM",
+    designation: "Director I/C",
+    qualification: "M.M.S., M.Com., M.B.A., Ph.D.",
     department: "Management Studies",
     specialization: "Financial Management & Business Economics",
     experience: "14+ Years Teaching Experience"
   },
   {
+    id: "fac-2",
+    name: "Prof. Piyush S. Agrawal",
+    designation: "HOD & Deputy Director",
+    qualification: "M.B.M. (C.M.), M.Com.",
+    department: "Management Studies",
+    specialization: "Business Administration & Management Information Systems",
+    experience: "15+ Years Academic & Administrative Experience"
+  },
+  {
+    id: "fac-3",
+    name: "Dr. Mandar Kulkarni",
+    designation: "Associate Professor",
+    qualification: "M.Com., MBA, Ph.D.",
+    department: "Computer Applications",
+    specialization: "Computer Science & Communication Systems",
+    experience: "18+ Years Higher Education Experience"
+  },
+  {
     id: "fac-4",
     name: "Prof. Anil Mahajan",
     designation: "Assistant Professor",
-    qualification: "MCA, M.Sc. (Comp. Sci.)",
+    qualification: "M.Sc. Computer",
     department: "Computer Applications",
     specialization: "C, C++, Java Programming & Web Development",
     experience: "12+ Years Teaching Experience"
@@ -263,7 +263,7 @@ export const FACULTY_LIST: FacultyMember[] = [
     id: "fac-5",
     name: "Prof. Gayatri Bhosale",
     designation: "Assistant Professor",
-    qualification: "BCA, MCA",
+    qualification: "M.C.A.",
     department: "Computer Applications",
     specialization: "Computer Science & Software Applications",
     experience: "Academic Faculty Member"
@@ -272,10 +272,46 @@ export const FACULTY_LIST: FacultyMember[] = [
     id: "fac-6",
     name: "Prof. Snehal Kambale",
     designation: "Assistant Professor",
-    qualification: "MCA",
+    qualification: "B.E. IT",
     department: "Computer Applications",
     specialization: "Database Management Systems & Software Engineering",
     experience: "8+ Years Teaching Experience"
+  },
+  {
+    id: "fac-7",
+    name: "Prof. Rini Sharma",
+    designation: "Assistant Professor",
+    qualification: "M.Sc. Computer",
+    department: "Computer Applications",
+    specialization: "Computer Science",
+    experience: "Academic Faculty Member"
+  },
+  {
+    id: "fac-8",
+    name: "Prof. Pratik Agrawal",
+    designation: "Assistant Professor",
+    qualification: "M.A. English",
+    department: "Humanities",
+    specialization: "English Language & Communication",
+    experience: "Academic Faculty Member"
+  },
+  {
+    id: "fac-9",
+    name: "Mr. Devendra Joshi",
+    designation: "Office Head",
+    qualification: "Office Administration",
+    department: "Administration",
+    specialization: "Office Management",
+    experience: "Administrative Experience"
+  },
+  {
+    id: "fac-10",
+    name: "Mr. Prafull Patil",
+    designation: "Lab Assistant",
+    qualification: "Laboratory Support",
+    department: "Computer Applications",
+    specialization: "Laboratory Assistance",
+    experience: "Technical Support Experience"
   }
 ];
 
