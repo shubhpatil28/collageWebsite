@@ -210,11 +210,53 @@ function MascotInner({ isOpen, onClick }: Props) {
    * so it NEVER runs on the server.
    */
   const shouldReduce = useReducedMotion();
-  const [blinking, setBlinking]     = useState(false);
+  const [blinking, setBlinking] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
-  const [hovered, setHovered]       = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [mobileVisible, setMobileVisible] = useState(true);
   const blinkRef   = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tooltipRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  /*
+   * Mobile bottom offset — safe here because MascotInner is client-only.
+   * On viewports ≤768px the mascot rises ~70px to avoid overlapping footer
+   * text ("Managed by: ..."). env(safe-area-inset-bottom) handles iOS home bar.
+   */
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", onResize, { passive: true });
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+  const bottomOffset = isMobile
+    ? "calc(86px + env(safe-area-inset-bottom, 0px))"
+    : "16px";
+
+  /*
+   * Scroll-hide on mobile — hides mascot immediately when the user starts
+   * scrolling; fades back in 1.5 s after the last scroll event.
+   * Prevents the mascot from floating over form fields and footer content.
+   * Desktop is unaffected (listener not attached when !isMobile).
+   */
+  const [scrollHidden, setScrollHidden] = useState(false);
+  const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    if (!isMobile) {
+      // Ensure mascot is visible if user resizes from mobile → desktop
+      setScrollHidden(false);
+      return;
+    }
+    const onScroll = () => {
+      setScrollHidden(true);
+      if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+      scrollTimerRef.current = setTimeout(() => setScrollHidden(false), 1500);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+    };
+  }, [isMobile]);
 
   /* Blink scheduler */
   const scheduleBlink = useCallback(() => {
@@ -232,10 +274,11 @@ function MascotInner({ isOpen, onClick }: Props) {
     }, randBlink());
   }, []);
 
-  /* Tooltip scheduler */
+  /* Tooltip scheduler — suppressed on mobile to avoid covering form fields */
   const scheduleTooltip = useCallback((delay = 7000) => {
     tooltipRef.current = setTimeout(() => {
-      if (!isOpen) setShowTooltip(true);
+      // Only show tooltip on desktop (>768 px); skip entirely on mobile.
+      if (!isOpen && window.innerWidth > 768) setShowTooltip(true);
       setTimeout(() => {
         setShowTooltip(false);
         scheduleTooltip(15000 + Math.random() * 8000);
@@ -255,6 +298,22 @@ function MascotInner({ isOpen, onClick }: Props) {
 
   useEffect(() => { if (isOpen) setShowTooltip(false); }, [isOpen]);
 
+  useEffect(() => {
+    const isMobile = () => window.matchMedia("(max-width: 768px)").matches;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const onScroll = () => {
+      if (!isMobile()) return;
+      setMobileVisible(false);
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => setMobileVisible(true), 1500);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (timer) clearTimeout(timer);
+    };
+  }, []);
+
   /* Cyan glow — brighter on hover; slightly reduced intensity */
   const glowFilter = hovered
     ? "drop-shadow(0 0 14px rgba(0,210,255,0.80)) drop-shadow(0 0 28px rgba(0,150,255,0.45)) drop-shadow(0 3px 10px rgba(0,0,0,0.25))"
@@ -262,7 +321,7 @@ function MascotInner({ isOpen, onClick }: Props) {
 
   return (
     <AnimatePresence>
-      {!isOpen && (
+      {!isOpen && !(typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches && !mobileVisible) && (
         <motion.div
           key="mascot-root"
           initial={{ opacity: 0, scale: 0.65, y: 30 }}
@@ -271,13 +330,16 @@ function MascotInner({ isOpen, onClick }: Props) {
           transition={{ type: "spring", stiffness: 280, damping: 22 }}
           style={{
             position: "fixed",
-            bottom: "16px",
+            bottom: bottomOffset,
             right: "16px",
             zIndex: 50,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            pointerEvents: "auto",
+            /* Fade out while scrolling on mobile; desktop always visible */
+            opacity: isMobile && scrollHidden ? 0 : 1,
+            pointerEvents: isMobile && scrollHidden ? "none" : "auto",
+            transition: "opacity 0.25s ease",
           }}
         >
           {/* Tooltip */}
