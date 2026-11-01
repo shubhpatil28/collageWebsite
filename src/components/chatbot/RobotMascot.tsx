@@ -5,191 +5,218 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
 interface Props { isOpen: boolean; onClick: () => void; }
 
-function randBlink() { return 2600 + Math.random() * 3200; }
+/* ── Helpers ─────────────────────────────────────────────────────────────── */
+function randBlink() { return 2800 + Math.random() * 3000; }
 function randDouble() { return Math.random() < 0.28; }
 
-const SIZE = "clamp(120px, 20vw, 180px)";
-
-/* ─── Inline SVG Robot ────────────────────────────────────────────────────── */
-function RobotSVG({ blinking, reduced }: { blinking: boolean; reduced: boolean }) {
+/* ── SVG Robot HEAD ONLY ─────────────────────────────────────────────────── */
+function RobotHeadSVG({ blinking, reduced }: { blinking: boolean; reduced: boolean }) {
   return (
-    <svg viewBox="0 0 200 265" xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true" style={{ width: "100%", height: "auto", overflow: "visible" }}>
+    <svg
+      viewBox="0 0 120 130"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      style={{ width: "100%", height: "auto", overflow: "visible" }}
+    >
       <defs>
-        <linearGradient id="rg-body" x1="20%" y1="0%" x2="80%" y2="100%">
-          <stop offset="0%" stopColor="#ffffff"/><stop offset="55%" stopColor="#edf3fb"/><stop offset="100%" stopColor="#c6d4e8"/>
-        </linearGradient>
-        <linearGradient id="rg-arm" x1="25%" y1="0%" x2="75%" y2="100%">
-          <stop offset="0%" stopColor="#f6fafe"/><stop offset="100%" stopColor="#c8d6ea"/>
-        </linearGradient>
-        <linearGradient id="rg-leg" x1="25%" y1="0%" x2="75%" y2="100%">
-          <stop offset="0%" stopColor="#f0f5fc"/><stop offset="100%" stopColor="#c4d2e6"/>
-        </linearGradient>
-        <linearGradient id="rg-head" x1="15%" y1="0%" x2="85%" y2="100%">
-          <stop offset="0%" stopColor="#ffffff"/><stop offset="45%" stopColor="#eef4fd"/><stop offset="100%" stopColor="#c0ceea"/>
-        </linearGradient>
-        <linearGradient id="rg-blue" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#58baff"/><stop offset="55%" stopColor="#1978d8"/><stop offset="100%" stopColor="#0c52a0"/>
-        </linearGradient>
-        <linearGradient id="rg-chest" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#2282e2"/><stop offset="100%" stopColor="#0d3f8a"/>
-        </linearGradient>
-        <radialGradient id="rg-screen" cx="32%" cy="28%" r="68%">
-          <stop offset="0%" stopColor="#0e2540"/><stop offset="100%" stopColor="#040e1c"/>
+        {/* Pearl-white ceramic shell gradient */}
+        <radialGradient id="rh-shell" cx="35%" cy="22%" r="75%">
+          <stop offset="0%"   stopColor="#ffffff"/>
+          <stop offset="55%"  stopColor="#eef4fd"/>
+          <stop offset="100%" stopColor="#bfceea"/>
         </radialGradient>
-        <linearGradient id="rg-ant" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#40dcff"/><stop offset="100%" stopColor="#0098cc"/>
+
+        {/* Ear nub gradient */}
+        <linearGradient id="rh-ear" x1="20%" y1="0%" x2="80%" y2="100%">
+          <stop offset="0%"   stopColor="#f4f8ff"/>
+          <stop offset="100%" stopColor="#c0cfea"/>
         </linearGradient>
-        <radialGradient id="rg-spec" cx="35%" cy="25%" r="55%">
-          <stop offset="0%" stopColor="rgba(255,255,255,0.62)"/><stop offset="100%" stopColor="rgba(255,255,255,0)"/>
+
+        {/* Dark navy face display */}
+        <radialGradient id="rh-screen" cx="30%" cy="25%" r="72%">
+          <stop offset="0%"   stopColor="#0e2540"/>
+          <stop offset="100%" stopColor="#040e1c"/>
         </radialGradient>
+
+        {/* Cyan eye iris glow */}
+        <radialGradient id="rh-iris" cx="38%" cy="30%" r="65%">
+          <stop offset="0%"   stopColor="#7ff4ff"/>
+          <stop offset="55%"  stopColor="#00d4f5"/>
+          <stop offset="100%" stopColor="#0096c7"/>
+        </radialGradient>
+
+        {/* Eye pupil depth */}
+        <radialGradient id="rh-pupil" cx="35%" cy="30%" r="65%">
+          <stop offset="0%"   stopColor="#001a2e"/>
+          <stop offset="100%" stopColor="#000d18"/>
+        </radialGradient>
+
+        {/* Antenna shaft */}
+        <linearGradient id="rh-ant" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"   stopColor="#38c8f0"/>
+          <stop offset="100%" stopColor="#0087b8"/>
+        </linearGradient>
+
+        {/* Shell gloss specular */}
+        <radialGradient id="rh-spec" cx="32%" cy="18%" r="52%">
+          <stop offset="0%"   stopColor="rgba(255,255,255,0.68)"/>
+          <stop offset="100%" stopColor="rgba(255,255,255,0)"/>
+        </radialGradient>
+
+        {/* Screen inner gloss */}
+        <radialGradient id="rh-screenSpec" cx="25%" cy="20%" r="55%">
+          <stop offset="0%"   stopColor="rgba(255,255,255,0.08)"/>
+          <stop offset="100%" stopColor="rgba(255,255,255,0)"/>
+        </radialGradient>
+
+        {/* Glow filters */}
+        <filter id="rh-eyeGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="1.8" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="rh-antGlow" x="-100%" y="-100%" width="300%" height="300%">
+          <feGaussianBlur stdDeviation="2.2" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="rh-screenGlow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="1" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
       </defs>
 
-      {/* LEGS */}
+      {/* ── HEAD GROUP — tilt pivot at neck base (60, 108) ── */}
       <motion.g
-        animate={reduced ? undefined : { y: [0,-1.2,0,-0.6,0] }}
-        transition={{ duration:4.2, repeat:Infinity, ease:"easeInOut" }}
+        style={{ transformOrigin: "60px 108px" }}
+        animate={reduced ? undefined : {
+          rotate: [0, 2.5, 0.3, -2.0, 0, 1.4, -0.5, 0],
+        }}
+        transition={{ duration: 8.5, repeat: Infinity, ease: "easeInOut" }}
       >
-        <rect x="54" y="198" width="38" height="46" rx="12" fill="url(#rg-leg)" stroke="#cdd9ee" strokeWidth="0.8"/>
-        <rect x="108" y="198" width="38" height="46" rx="12" fill="url(#rg-leg)" stroke="#cdd9ee" strokeWidth="0.8"/>
-        <ellipse cx="73" cy="201" rx="12" ry="8" fill="url(#rg-blue)"/>
-        <ellipse cx="127" cy="201" rx="12" ry="8" fill="url(#rg-blue)"/>
-        <circle cx="73" cy="218" r="7" fill="url(#rg-blue)"/>
-        <circle cx="127" cy="218" r="7" fill="url(#rg-blue)"/>
-        <rect x="54" y="237" width="38" height="8" rx="4" fill="url(#rg-blue)"/>
-        <rect x="108" y="237" width="38" height="8" rx="4" fill="url(#rg-blue)"/>
-        <rect x="43" y="241" width="60" height="20" rx="10" fill="url(#rg-leg)" stroke="#cdd9ee" strokeWidth="0.8"/>
-        <rect x="97" y="241" width="60" height="20" rx="10" fill="url(#rg-leg)" stroke="#cdd9ee" strokeWidth="0.8"/>
-        <circle cx="63" cy="254" r="4.5" fill="url(#rg-blue)" opacity="0.7"/>
-        <circle cx="137" cy="254" r="4.5" fill="url(#rg-blue)" opacity="0.7"/>
-      </motion.g>
+        {/* ── EAR NUBS (left & right side decorations) ── */}
+        <ellipse cx="16" cy="72" rx="8" ry="13" fill="url(#rh-ear)"
+          stroke="#cdd9ee" strokeWidth="0.7" transform="rotate(-10 16 72)"/>
+        <ellipse cx="104" cy="72" rx="8" ry="13" fill="url(#rh-ear)"
+          stroke="#cdd9ee" strokeWidth="0.7" transform="rotate(10 104 72)"/>
+        {/* Ear accent rings */}
+        <ellipse cx="16" cy="72" rx="4" ry="7" fill="none"
+          stroke="#00c4ef" strokeWidth="0.8" opacity="0.55"
+          transform="rotate(-10 16 72)"/>
+        <ellipse cx="104" cy="72" rx="4" ry="7" fill="none"
+          stroke="#00c4ef" strokeWidth="0.8" opacity="0.55"
+          transform="rotate(10 104 72)"/>
 
-      {/* LEFT ARM — pivot shoulder (38, 124) */}
-      <motion.g
-        style={{ transformOrigin:"38px 124px" }}
-        initial={{ rotate: 5 }}
-        animate={reduced ? undefined : { rotate:[5,10,3,-1,5] }}
-        transition={{ duration:5.8, repeat:Infinity, ease:"easeInOut" }}
-      >
-        <circle cx="38" cy="124" r="14" fill="url(#rg-blue)"/>
-        <rect x="26" y="124" width="24" height="52" rx="11" fill="url(#rg-arm)" stroke="#c8d6ea" strokeWidth="0.8"/>
-        <circle cx="38" cy="178" r="12" fill="url(#rg-blue)"/>
-        <rect x="27" y="176" width="22" height="36" rx="9" fill="url(#rg-arm)" stroke="#c8d6ea" strokeWidth="0.8"/>
-        <rect x="26" y="209" width="24" height="6" rx="3" fill="url(#rg-blue)"/>
-        <rect x="24" y="213" width="28" height="20" rx="9" fill="url(#rg-arm)" stroke="#c8d6ea" strokeWidth="0.8"/>
-      </motion.g>
+        {/* ── MAIN HEAD SHELL (rounded rectangle) ── */}
+        <rect x="20" y="28" width="80" height="82" rx="26"
+          fill="url(#rh-shell)" stroke="#dde8f5" strokeWidth="0.9"/>
+        {/* Shell specular gloss */}
+        <rect x="20" y="28" width="80" height="82" rx="26" fill="url(#rh-spec)"/>
+        {/* Shell bottom ridge */}
+        <rect x="28" y="100" width="64" height="10" rx="5"
+          fill="#d8e5f5" opacity="0.6"/>
 
-      {/* BODY — breathing pivot (100, 155) */}
-      <motion.g
-        style={{ transformOrigin:"100px 155px" }}
-        animate={reduced ? undefined : { scaleY:[1,1.016,1,1.008,1], y:[0,-0.8,0,-0.4,0] }}
-        transition={{ duration:3.8, repeat:Infinity, ease:"easeInOut" }}
-      >
-        <rect x="38" y="110" width="124" height="92" rx="22" fill="url(#rg-body)" stroke="#dde8f5" strokeWidth="0.8"/>
-        <rect x="38" y="110" width="124" height="92" rx="22" fill="url(#rg-spec)"/>
-        <ellipse cx="68" cy="200" rx="14" ry="9" fill="url(#rg-blue)"/>
-        <ellipse cx="132" cy="200" rx="14" ry="9" fill="url(#rg-blue)"/>
-        <path d="M52 152 Q100 162 148 152" stroke="#b4c4dc" strokeWidth="1" fill="none" opacity="0.55"/>
-        <path d="M44 170 Q100 180 156 170" stroke="#b4c4dc" strokeWidth="1" fill="none" opacity="0.4"/>
-        {/* Chest panel */}
-        <rect x="64" y="126" width="72" height="60" rx="13" fill="url(#rg-chest)"/>
-        <rect x="66" y="128" width="68" height="56" rx="11" fill="none" stroke="#00ccf5" strokeWidth="1.2" opacity="0.75"/>
-        {/* Chip */}
-        <rect x="80" y="140" width="40" height="40" rx="5" fill="#0a327a" stroke="#00d4ff" strokeWidth="1.5"/>
-        <rect x="86" y="146" width="28" height="28" rx="3" fill="#1258a8"/>
-        <circle cx="92" cy="152" r="2" fill="#00d4ff" opacity="0.9"/>
-        <circle cx="101" cy="152" r="2" fill="#00d4ff" opacity="0.9"/>
-        <circle cx="110" cy="152" r="2" fill="#00d4ff" opacity="0.9"/>
-        <circle cx="92" cy="161" r="2" fill="#00d4ff" opacity="0.9"/>
-        <circle cx="101" cy="161" r="2" fill="#00d4ff" opacity="0.9"/>
-        <circle cx="110" cy="161" r="2" fill="#00d4ff" opacity="0.9"/>
-        <circle cx="92" cy="170" r="2" fill="#00d4ff" opacity="0.9"/>
-        <circle cx="101" cy="170" r="2" fill="#00d4ff" opacity="0.9"/>
-        <circle cx="110" cy="170" r="2" fill="#00d4ff" opacity="0.9"/>
-        <rect x="74" y="149" width="6" height="3" rx="1.5" fill="#00b8e8"/>
-        <rect x="74" y="157" width="6" height="3" rx="1.5" fill="#00b8e8"/>
-        <rect x="74" y="165" width="6" height="3" rx="1.5" fill="#00b8e8"/>
-        <rect x="120" y="149" width="6" height="3" rx="1.5" fill="#00b8e8"/>
-        <rect x="120" y="157" width="6" height="3" rx="1.5" fill="#00b8e8"/>
-        <rect x="120" y="165" width="6" height="3" rx="1.5" fill="#00b8e8"/>
-        <rect x="88" y="134" width="6" height="6" rx="1.5" fill="#00b8e8"/>
-        <rect x="100" y="134" width="6" height="6" rx="1.5" fill="#00b8e8"/>
-        <rect x="88" y="180" width="6" height="6" rx="1.5" fill="#00b8e8"/>
-        <rect x="100" y="180" width="6" height="6" rx="1.5" fill="#00b8e8"/>
-      </motion.g>
+        {/* ── NECK CONNECTOR ── */}
+        <rect x="45" y="108" width="30" height="14" rx="7"
+          fill="#c4d4ea" stroke="#b8cbde" strokeWidth="0.7"/>
+        <rect x="50" y="111" width="20" height="4" rx="2" fill="#a8bdd8" opacity="0.6"/>
 
-{/* RIGHT ARM (raised/waving) — pivot shoulder (162, 124) */}
-<motion.g
-  style={{ transformOrigin:"162px 124px" }}
-   initial={{ rotate: -100 }}
-   animate={reduced ? undefined : { rotate:[-100,-106,-98,-104,-100] }}
-   transition={{ duration:2.5, repeat:Infinity, ease:"easeInOut", repeatDelay:3.5 }}
->
-  <circle cx="162" cy="124" r="14" fill="url(#rg-blue)"/>
-  <rect x="150" y="124" width="24" height="52" rx="11" fill="url(#rg-arm)" stroke="#c8d6ea" strokeWidth="0.8"/>
-{/* Forearm and hand with wrist rotation */}
-<motion.g
-  style={{ transformOrigin:"162px 178px" }}
-  animate={reduced ? undefined : { rotate:[0,6,-4,5,-2,0] }}
-  transition={{ duration:1.6, repeat:Infinity, ease:"easeInOut", repeatDelay:2 }}
->
-  <circle cx="162" cy="178" r="12" fill="url(#rg-blue)"/>
-  <rect x="151" y="176" width="22" height="36" rx="9" fill="url(#rg-arm)" stroke="#c8d6ea" strokeWidth="0.8"/>
-  {/* Hand palm - rounded shape */}
-  <path d="M150 209 h24 a3 3 0 0 1 3 3 v6 a3 3 0 0 1 -3 3 h-24 a3 3 0 0 1 -3 -3 v-6 a3 3 0 0 1 3 -3 z"
-    fill="url(#rg-arm)" stroke="#c8d6ea" strokeWidth="0.8"/>
-  {/* Fingers with gentle curves */}
-  <g fill="url(#rg-arm)" stroke="#c8d6ea" strokeWidth="0.8">
-    <path d="M154 209 C154 190, 158 190, 158 209"/>
-    <path d="M162 209 C162 185, 166 185, 166 209"/>
-    <path d="M170 209 C170 190, 174 190, 174 209"/>
-    <path d="M178 209 C178 195, 182 195, 182 209"/>
-    {/* Thumb */}
-    <path d="M144 225 C144 215, 150 215, 150 225"/>
-  </g>
-</motion.g>
-</motion.g>
+        {/* ── DARK FACE DISPLAY SCREEN ── */}
+        <rect x="28" y="38" width="64" height="60" rx="16"
+          fill="url(#rh-screen)" filter="url(#rh-screenGlow)"/>
+        {/* Screen inner gloss reflection */}
+        <rect x="28" y="38" width="64" height="60" rx="16" fill="url(#rh-screenSpec)"/>
+        {/* Screen bezel ring */}
+        <rect x="28" y="38" width="64" height="60" rx="16"
+          fill="none" stroke="#00c4ef" strokeWidth="0.8" opacity="0.35"/>
 
-      {/* HEAD — tilt pivot at bottom-center (100, 102) */}
-      <motion.g
-        style={{ transformOrigin:"100px 102px" }}
-        animate={reduced ? undefined : { rotate:[0,2.8,0.4,-2.2,0,1.6,0] }}
-        transition={{ duration:7.8, repeat:Infinity, ease:"easeInOut" }}
-      >
-        <rect x="82" y="98" width="36" height="16" rx="7" fill="url(#rg-blue)"/>
-        <rect x="30" y="36" width="18" height="34" rx="9" fill="url(#rg-blue)"/>
-        <rect x="152" y="36" width="18" height="34" rx="9" fill="url(#rg-blue)"/>
-        <rect x="44" y="20" width="112" height="82" rx="22" fill="url(#rg-head)" stroke="#dde8f5" strokeWidth="0.8"/>
-        <ellipse cx="76" cy="38" rx="22" ry="14" fill="white" opacity="0.42"/>
-        <rect x="57" y="30" width="86" height="62" rx="13" fill="url(#rg-screen)"/>
-        {/* Open eyes */}
-        <motion.g animate={{ opacity: blinking ? 0 : 1 }} transition={{ duration:0.07 }}>
-          <path d="M68 59 Q79 44 90 59" stroke="#00e5ff" strokeWidth="3.8" fill="none" strokeLinecap="round"/>
-          <path d="M110 59 Q121 44 132 59" stroke="#00e5ff" strokeWidth="3.8" fill="none" strokeLinecap="round"/>
-          <path d="M74 74 Q100 88 126 74" stroke="#00e5ff" strokeWidth="3" fill="none" strokeLinecap="round"/>
+        {/* ── EYES GROUP ── */}
+        <motion.g
+          animate={{ opacity: blinking ? 0 : 1 }}
+          transition={{ duration: 0.065 }}
+        >
+          {/* Left eye — iris */}
+          <circle cx="46" cy="64" r="11" fill="url(#rh-iris)"
+            filter="url(#rh-eyeGlow)"/>
+          {/* Left eye — pupil */}
+          <circle cx="46" cy="64" r="6.5" fill="url(#rh-pupil)"/>
+          {/* Left eye — inner glow ring */}
+          <circle cx="46" cy="64" r="9" fill="none"
+            stroke="#00e5ff" strokeWidth="1.1" opacity="0.7"/>
+          {/* Left eye — specular dot */}
+          <circle cx="42.5" cy="60.5" r="2.2" fill="white" opacity="0.55"/>
+
+          {/* Right eye — iris */}
+          <circle cx="74" cy="64" r="11" fill="url(#rh-iris)"
+            filter="url(#rh-eyeGlow)"/>
+          {/* Right eye — pupil */}
+          <circle cx="74" cy="64" r="6.5" fill="url(#rh-pupil)"/>
+          {/* Right eye — inner glow ring */}
+          <circle cx="74" cy="64" r="9" fill="none"
+            stroke="#00e5ff" strokeWidth="1.1" opacity="0.7"/>
+          {/* Right eye — specular dot */}
+          <circle cx="70.5" cy="60.5" r="2.2" fill="white" opacity="0.55"/>
+
+          {/* ── SMILE ── */}
+          <path d="M43 83 Q60 93 77 83"
+            stroke="#00e5ff" strokeWidth="2.2" fill="none"
+            strokeLinecap="round" opacity="0.85"
+            filter="url(#rh-eyeGlow)"/>
         </motion.g>
-        {/* Closed eyes */}
-        <motion.g animate={{ opacity: blinking ? 1 : 0 }} transition={{ duration:0.07 }}>
-          <rect x="68" y="54" width="22" height="5" rx="2.5" fill="#00e5ff"/>
-          <rect x="110" y="54" width="22" height="5" rx="2.5" fill="#00e5ff"/>
+
+        {/* Closed eyes (blink) */}
+        <motion.g
+          animate={{ opacity: blinking ? 1 : 0 }}
+          transition={{ duration: 0.065 }}
+        >
+          <rect x="36" y="61" width="20" height="5" rx="2.5" fill="#00e5ff" opacity="0.9"/>
+          <rect x="64" y="61" width="20" height="5" rx="2.5" fill="#00e5ff" opacity="0.9"/>
+          {/* Smile kept visible while blinking */}
+          <path d="M43 83 Q60 93 77 83"
+            stroke="#00e5ff" strokeWidth="2.2" fill="none"
+            strokeLinecap="round" opacity="0.75"/>
         </motion.g>
-        <line x1="100" y1="20" x2="100" y2="8" stroke="#1060c0" strokeWidth="3" strokeLinecap="round"/>
-        <circle cx="100" cy="5" r="7" fill="url(#rg-ant)"/>
-        <circle cx="100" cy="5" r="4" fill="#80eeff" opacity="0.55"/>
+
+        {/* ── ANTENNA SHAFT ── */}
+        <line x1="60" y1="28" x2="60" y2="13"
+          stroke="url(#rh-ant)" strokeWidth="2.8" strokeLinecap="round"/>
+        {/* Antenna base ring */}
+        <ellipse cx="60" cy="28" rx="5" ry="3" fill="#c8daf0" stroke="#aabdd8" strokeWidth="0.7"/>
+
+        {/* ── ANTENNA TIP (glowing cyan orb) ── */}
+        <motion.g
+          filter="url(#rh-antGlow)"
+          animate={reduced ? undefined : {
+            opacity: [0.85, 1, 0.85, 0.92, 0.85],
+            scale: [1, 1.18, 1, 1.1, 1],
+          }}
+          style={{ transformOrigin: "60px 10px" }}
+          transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <circle cx="60" cy="10" r="6.5" fill="url(#rh-ant)" opacity="0.9"/>
+          <circle cx="60" cy="10" r="4.5" fill="#80eeff" opacity="0.6"/>
+          <circle cx="58.2" cy="8.2" r="1.5" fill="white" opacity="0.7"/>
+        </motion.g>
+
       </motion.g>
     </svg>
   );
 }
 
-/* ─── Main Export ─────────────────────────────────────────────────────────── */
-export default function RobotMascot({ isOpen, onClick }: Props) {
+/* ── Inner mascot — only rendered after client hydration ─────────────────── */
+function MascotInner({ isOpen, onClick }: Props) {
+  /*
+   * useReducedMotion() calls window.matchMedia internally.
+   * This is safe here because MascotInner is only ever mounted
+   * inside a useEffect-gated `mounted` check (see RobotMascot below),
+   * so it NEVER runs on the server.
+   */
   const shouldReduce = useReducedMotion();
-  const [blinking, setBlinking] = useState(false);
+  const [blinking, setBlinking]     = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
-  const [hovered, setHovered] = useState(false);
-  const blinkRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [hovered, setHovered]       = useState(false);
+  const blinkRef   = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tooltipRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  /* Blink scheduler */
   const scheduleBlink = useCallback(() => {
     blinkRef.current = setTimeout(() => {
       setBlinking(true);
@@ -205,13 +232,14 @@ export default function RobotMascot({ isOpen, onClick }: Props) {
     }, randBlink());
   }, []);
 
-  const scheduleTooltip = useCallback((delay = 8000) => {
+  /* Tooltip scheduler */
+  const scheduleTooltip = useCallback((delay = 7000) => {
     tooltipRef.current = setTimeout(() => {
       if (!isOpen) setShowTooltip(true);
       setTimeout(() => {
         setShowTooltip(false);
-        scheduleTooltip(16000 + Math.random() * 8000);
-      }, 3200);
+        scheduleTooltip(15000 + Math.random() * 8000);
+      }, 3000);
     }, delay);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
@@ -220,62 +248,135 @@ export default function RobotMascot({ isOpen, onClick }: Props) {
     scheduleBlink();
     scheduleTooltip();
     return () => {
-      if (blinkRef.current) clearTimeout(blinkRef.current);
+      if (blinkRef.current)  clearTimeout(blinkRef.current);
       if (tooltipRef.current) clearTimeout(tooltipRef.current);
     };
   }, [scheduleBlink, scheduleTooltip]);
 
   useEffect(() => { if (isOpen) setShowTooltip(false); }, [isOpen]);
 
-  const glow = hovered
-    ? "drop-shadow(0 0 24px rgba(0,210,255,0.95)) drop-shadow(0 4px 22px rgba(0,100,255,0.5))"
-    : "drop-shadow(0 0 14px rgba(0,185,255,0.72)) drop-shadow(0 3px 14px rgba(0,60,200,0.38))";
+  /* Cyan glow — brighter on hover */
+  const glowFilter = hovered
+    ? "drop-shadow(0 0 18px rgba(0,210,255,0.95)) drop-shadow(0 0 36px rgba(0,150,255,0.55)) drop-shadow(0 4px 14px rgba(0,0,0,0.28))"
+    : "drop-shadow(0 0 10px rgba(0,200,255,0.7)) drop-shadow(0 0 22px rgba(0,120,255,0.35)) drop-shadow(0 3px 10px rgba(0,0,0,0.2))";
 
   return (
     <AnimatePresence>
       {!isOpen && (
         <motion.div
           key="mascot-root"
-          initial={{ opacity:0, scale:0.7, y:30 }}
-          animate={{ opacity:1, scale:1, y:0 }}
-          exit={{ opacity:0, scale:0.7, y:30 }}
-          transition={{ type:"spring", stiffness:260, damping:22 }}
-          style={{ position:"fixed", bottom:"12px", right:"12px", zIndex:50,
-            display:"flex", flexDirection:"column", alignItems:"center", pointerEvents:"auto" }}
+          initial={{ opacity: 0, scale: 0.65, y: 30 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.65, y: 30 }}
+          transition={{ type: "spring", stiffness: 280, damping: 22 }}
+          style={{
+            position: "fixed",
+            bottom: "16px",
+            right: "16px",
+            zIndex: 50,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            pointerEvents: "auto",
+          }}
         >
+          {/* Tooltip */}
           <AnimatePresence>
             {showTooltip && (
-              <motion.div key="tooltip"
-                initial={{ opacity:0, y:10, scale:0.85 }}
-                animate={{ opacity:1, y:0, scale:1 }}
-                exit={{ opacity:0, y:10, scale:0.85 }}
-                transition={{ duration:0.22 }}
-                style={{ background:"linear-gradient(135deg,#0c1d45,#1b3568)", color:"#fff",
-                  fontSize:"0.68rem", fontWeight:700, letterSpacing:"0.04em",
-                  padding:"7px 16px", borderRadius:"22px", marginBottom:"10px",
-                  whiteSpace:"nowrap", pointerEvents:"none", userSelect:"none",
-                  boxShadow:"0 6px 28px rgba(0,0,0,.4), 0 0 0 1px rgba(0,200,255,.3)" }}
+              <motion.div
+                key="tooltip"
+                initial={{ opacity: 0, y: 8, scale: 0.85 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 8, scale: 0.85 }}
+                transition={{ duration: 0.2 }}
+                style={{
+                  background: "linear-gradient(135deg,#0c1d45,#1a3568)",
+                  color: "#fff",
+                  fontSize: "0.67rem",
+                  fontWeight: 700,
+                  letterSpacing: "0.04em",
+                  padding: "6px 14px",
+                  borderRadius: "20px",
+                  marginBottom: "8px",
+                  whiteSpace: "nowrap",
+                  pointerEvents: "none",
+                  userSelect: "none",
+                  boxShadow: "0 6px 24px rgba(0,0,0,0.38), 0 0 0 1px rgba(0,200,255,0.28)",
+                }}
               >
                 💬 Ask AIM Assistant
               </motion.div>
             )}
           </AnimatePresence>
 
-          <button onClick={onClick}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
-            aria-label="Open AIM College Assistant"
-            style={{ background:"transparent", border:"none", padding:0, cursor:"pointer",
-              outline:"none", WebkitTapHighlightColor:"transparent", touchAction:"manipulation",
-              width:SIZE, display:"block", filter:glow, transition:"filter 0.35s ease" }}
+          {/* Floating animation wrapper */}
+          <motion.div
+            animate={shouldReduce ? undefined : {
+              y: [0, -8, -2, -10, 0, -5, 0],
+            }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
           >
-            <motion.div whileTap={{ scale:0.93 }}
-              transition={{ type:"spring", stiffness:400, damping:25 }}>
-              <RobotSVG blinking={blinking} reduced={!!shouldReduce} />
-            </motion.div>
-          </button>
+            {/* Click button */}
+            <button
+              id="aim-mascot-button"
+              onClick={onClick}
+              onMouseEnter={() => setHovered(true)}
+              onMouseLeave={() => setHovered(false)}
+              aria-label="Open AIM College Assistant"
+              style={{
+                background: "transparent",
+                border: "none",
+                padding: 0,
+                cursor: "pointer",
+                outline: "none",
+                WebkitTapHighlightColor: "transparent",
+                touchAction: "manipulation",
+                /* Compact head size — clamp between 80px (mobile) and 110px (desktop) */
+                width: "clamp(80px, 14vw, 110px)",
+                display: "block",
+                filter: glowFilter,
+                transition: "filter 0.3s ease",
+              }}
+            >
+              <motion.div
+                whileHover={{ scale: 1.06 }}
+                whileTap={{ scale: 0.92 }}
+                transition={{ type: "spring", stiffness: 380, damping: 22 }}
+              >
+                <RobotHeadSVG blinking={blinking} reduced={!!shouldReduce} />
+              </motion.div>
+            </button>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
   );
+}
+
+/* ── Main Export ─────────────────────────────────────────────────────────── */
+/*
+ * HYDRATION FIX:
+ * `useReducedMotion()` (Framer Motion v13) calls `initPrefersReducedMotion()`
+ * which accesses `window.matchMedia` — a browser-only API.
+ * On the server `prefersReducedMotion.current` is `null`.
+ * On the client it initializes to `true` | `false`.
+ * This creates a server/client mismatch in the initial useState value,
+ * which React 19 reports as a hydration error on the nearest DOM ancestor
+ * (the <body> element in layout.tsx, line 66).
+ *
+ * Solution: render nothing on the server; mount MascotInner only after
+ * the client has fully hydrated (useEffect fires after hydration).
+ * This is the canonical SSR-safe pattern for browser-API-dependent components.
+ */
+export default function RobotMascot({ isOpen, onClick }: Props) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Render nothing on the server — prevents any SSR/client mismatch.
+  if (!mounted) return null;
+
+  return <MascotInner isOpen={isOpen} onClick={onClick} />;
 }
